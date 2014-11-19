@@ -1,0 +1,38 @@
+
+{
+  "name": "gulp-flowtype",
+  "version": "0.1.0",
+  "description": "A plugin for Gulp",
+  "keywords": [
+    "gulpplugin"
+  ],
+  "author": {
+    "name": "Charlie Dowler",
+    "email": "",
+    "url": "https://github.com/charliedowler"
+  },
+  "repository": "charliedowler/gulp-flowtype",
+  "scripts": {
+    "test": "istanbul test _mocha --report html -- test/*.js --reporter spec",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+  },
+  "dependencies": {
+    "through2": "*",
+    "gulp-util": "~2.2.0",
+	"jshint-stylish": "~1.0.0",
+    "flow-bin": "~0.1.1"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "coveralls": "*",
+    "mocha-lcov-reporter": "*",
+    "istanbul": "*",
+    "event-stream": "*",
+    "should": "~2.1.0"
+  },
+  "engines": {
+    "node": ">=0.8.0",
+    "npm": ">=1.2.10"
+  },
+  "license": "MIT"
+}
