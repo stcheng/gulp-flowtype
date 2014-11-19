@@ -1,9 +1,11 @@
+/* @flow */
 /*global describe, it*/
 "use strict";
 
 var fs = require("fs"),
 	es = require("event-stream"),
 	should = require("should");
+var path = require('path');
 
 require("mocha");
 
@@ -25,12 +27,12 @@ console.log = function() {
 describe("gulp-flow", function () {
 
 	it("should produce expected file via buffer", function (done) {
-
+		var _path = '/' + path.relative('/', 'test/fixtures/hello.js');
 		var srcFile = new gutil.File({
-			path: "test/fixtures/hello.js",
+			path: _path,
 			cwd: "test/",
 			base: "test/fixtures",
-			contents: fs.readFileSync("test/fixtures/hello.js")
+			contents: fs.readFileSync(_path)
 		});
 
 		var stream = flow();
@@ -49,7 +51,7 @@ describe("gulp-flow", function () {
 			setTimeout(function() {
 				should.equal(matched, true);
 				done();
-			}, 200);
+			}, 1000);
 		});
 		stream.write(srcFile);
 		stream.end();
