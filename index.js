@@ -4,7 +4,8 @@ var gutil = require("gulp-util");
 var through = require("through2");
 var flowBin = require('flow-bin');
 var exec = require('child_process').exec;
-var flowToJshint = require('./flow-to-jshint');
+var flowToJshint = require('flow-to-jshint');
+var stylish = require('jshint-stylish/stylish').reporter;
 
 var done = {};
 
@@ -38,7 +39,7 @@ function executeFlow(PATH, callback) {
 			console.log('Passed Flow');
 		}
 		else if (result.errors.length) {
-			flowToJshint(result);
+			stylish(flowToJshint(result));
 		}
 		callback && callback(result);
 	});
