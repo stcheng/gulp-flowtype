@@ -2,7 +2,7 @@
 
 > Run [Facebook's Flow](http://flowtype.org/) in your gulp pipeline
 
-![gulp-flowtype example](screenshot.png)
+![gulp-flowtype example](screencap.gif)
 
 ## Installation
 ```shell
