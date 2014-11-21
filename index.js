@@ -8,7 +8,7 @@ var exec = require('child_process').exec;
 var flowToJshint = require('flow-to-jshint');
 var stylish = require('jshint-stylish/stylish').reporter;
 
-var done = {};
+var cache = {};
 
 function executeFlow(PATH, callback) {
 	var command = [
@@ -17,14 +17,8 @@ function executeFlow(PATH, callback) {
 		'/' + path.relative('/', PATH),
 		'--json'].join(' ');
 
-	var ignore = false;
-
-	Object.keys(done).forEach(function(key) {
-		ignore = ignore || !!path.relative(PATH, key);
-	});
-	if (ignore) {
-		callback && callback();
-		return false;
+	if (cache[PATH]) {
+		callback && callback(cache[PATH]);
 	}
 
 	exec(command, function (err, stdout, stderr) {
@@ -32,7 +26,7 @@ function executeFlow(PATH, callback) {
 		var result = {};
 		result.errors = parsed.errors.filter(function(error) {
 			error.message = error.message.filter(function(message) {
-				return RegExp(PATH).test(message.path);
+				return PATH == message.path;
 			});
 			return error.message.length > 0;
 		});
@@ -40,6 +34,7 @@ function executeFlow(PATH, callback) {
 			console.log(logSymbols.success + ' Flow has found 0 errors');
 		}
 		else if (result.errors.length) {
+			cache[PATH] = result;
 			stylish(flowToJshint(result));
 		}
 		callback && callback(result);
@@ -64,19 +59,13 @@ module.exports = function (param) {
 			var configPath = path.join(PATH, '.flowconfig');
 
 			if (fs.existsSync(configPath)) {
-				executeFlow(PATH, function(result) {
-					if (result) {
-						done[PATH] = result;
-					}
+				executeFlow(file.path, function(result) {
 					callback();
 				});
 			}
 			else {
 				fs.writeFile(configPath, '[ignore]\n[include]', function() {
-					executeFlow(PATH, function(result) {
-						if (result) {
-							done[PATH] = result;
-						}
+					executeFlow(file.path, function(result) {
 						fs.unlink(configPath);
 						callback();
 					});

@@ -18,19 +18,20 @@
   "dependencies": {
     "event-stream": "~3.1.7",
     "flow-bin": "~0.1.1",
-    "flow-to-jshint": "~0.1.0",
+    "flow-to-jshint": "~0.2.0",
     "gulp-util": "~2.2.0",
     "jshint-stylish": "~1.0.0",
     "log-symbols": "^1.0.1",
     "through2": "~0.6.3"
   },
   "devDependencies": {
-    "gulp": "~3.8.10",
-    "mocha": "~2.0.1",
     "coveralls": "~2.11.2",
-    "mocha-lcov-reporter": "~0.0.1",
-    "istanbul": "~0.3.2",
     "event-stream": "~3.1.7",
+    "gulp": "~3.8.10",
+    "gulp-jshint": "^1.9.0",
+    "istanbul": "~0.3.2",
+    "mocha": "~2.0.1",
+    "mocha-lcov-reporter": "~0.0.1",
     "should": "~2.1.0"
   },
   "engines": {
