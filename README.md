@@ -1,4 +1,4 @@
-## gulp-flowtype [![Build Status][travis-image]][travis-url]
+## gulp-flowtype [![Build Status][travis-image]][travis-url] [![NPM version][npm-image]][npm-url] [![Dependency Status][depstat-image]][depstat-url]
 
 > Run [Facebook's Flow](http://flowtype.org/) in your gulp pipeline
 
@@ -6,7 +6,7 @@
 
 ## Installation
 ```shell
-$ npm install --save gulp-flowtype
+$ npm install --save-dev gulp-flowtype
 ```
 
 ### Usage
@@ -22,3 +22,12 @@ gulp.task('typecheck', function() {
 
 [travis-url]: http://travis-ci.org/charliedowler/gulp-flowtype
 [travis-image]: https://secure.travis-ci.org/charliedowler/gulp-flowtype.png?branch=master
+
+[npm-url]: https://npmjs.org/package/gulp-flowtype
+[npm-image]: https://badge.fury.io/js/gulp-flowtype.png
+
+[travis-url]: http://travis-ci.org/charliedowler/gulp-flowtype
+[travis-image]: https://secure.travis-ci.org/charliedowler/gulp-flowtype.png?branch=master
+
+[depstat-url]: https://david-dm.org/charliedowler/gulp-flowtype
+[depstat-image]: https://david-dm.org/charliedowler/gulp-flowtype.png
