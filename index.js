@@ -3,6 +3,7 @@ var path = require('path');
 var gutil = require("gulp-util");
 var through = require("through2");
 var flowBin = require('flow-bin');
+var logSymbols = require('log-symbols');
 var exec = require('child_process').exec;
 var flowToJshint = require('flow-to-jshint');
 var stylish = require('jshint-stylish/stylish').reporter;
@@ -35,8 +36,8 @@ function executeFlow(PATH, callback) {
 			});
 			return error.message.length > 0;
 		});
-		if (result.passed) {
-			console.log('Passed Flow');
+		if (parsed.passed) {
+			console.log(logSymbols.success + ' Flow has found 0 errors');
 		}
 		else if (result.errors.length) {
 			stylish(flowToJshint(result));

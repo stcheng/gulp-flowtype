@@ -16,11 +16,12 @@
     "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "dependencies": {
-    "flow-to-jshint": "~0.1.0",
     "event-stream": "~3.1.7",
     "flow-bin": "~0.1.1",
+    "flow-to-jshint": "~0.1.0",
     "gulp-util": "~2.2.0",
     "jshint-stylish": "~1.0.0",
+    "log-symbols": "^1.0.1",
     "through2": "~0.6.3"
   },
   "devDependencies": {
