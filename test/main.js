@@ -18,9 +18,9 @@ var log = console.log;
 var matched = false;
 
 console.log = function() {
-	for (var i in Array.prototype.slice.call(arguments)) {
-		if (/string/.test(arguments[i])) matched = true;
-	}
+	Array.prototype.slice.call(arguments).forEach(function(arg) {
+		if (/string/.test(arg)) matched = true;
+	});
 	log.apply(console, arguments);
 };
 

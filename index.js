@@ -8,8 +8,6 @@ var exec = require('child_process').exec;
 var flowToJshint = require('flow-to-jshint');
 var stylish = require('jshint-stylish/stylish').reporter;
 
-var cache = {};
-
 function executeFlow(PATH, callback) {
 	var command = [
 		flowBin,
@@ -17,15 +15,23 @@ function executeFlow(PATH, callback) {
 		'/' + path.relative('/', PATH),
 		'--json'].join(' ');
 
-	if (cache[PATH]) {
-		callback && callback(cache[PATH]);
-	}
-
 	exec(command, function (err, stdout, stderr) {
 		var parsed = JSON.parse(stdout);
 		var result = {};
 		result.errors = parsed.errors.filter(function(error) {
-			error.message = error.message.filter(function(message) {
+			error.message = error.message.filter(function(message, index) {
+				/**
+				 * If flow finds an issue related to a different file
+				 * it returns a separate json property along with
+				 * the different file path. We can check the previous
+				 * message to see if it ends with `with` or `found`, if
+				 * true we know that the next error is related to this one.
+				 */
+				if (/(with|found)$/.test(message.descr)) {
+					if (error.message[index + 1]) {
+						return error.message[index + 1].path == PATH;
+					}
+				}
 				return PATH == message.path;
 			});
 			return error.message.length > 0;
@@ -34,7 +40,6 @@ function executeFlow(PATH, callback) {
 			console.log(logSymbols.success + ' Flow has found 0 errors');
 		}
 		else if (result.errors.length) {
-			cache[PATH] = result;
 			stylish(flowToJshint(result));
 		}
 		callback && callback(result);
@@ -66,7 +71,7 @@ module.exports = function (param) {
 			else {
 				fs.writeFile(configPath, '[ignore]\n[include]', function() {
 					executeFlow(file.path, function(result) {
-						fs.unlink(configPath);
+						fs.unlinkSync(configPath);
 						callback();
 					});
 				});
