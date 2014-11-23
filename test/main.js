@@ -15,11 +15,13 @@ var gutil = require("gulp-util"),
 	flow = require("../");
 
 var log = console.log;
-var matched = false;
+var stringError = false;
+var iterationError = false;
 
 console.log = function() {
 	Array.prototype.slice.call(arguments).forEach(function(arg) {
-		if (/string/.test(arg)) matched = true;
+		if (/string/.test(arg)) stringError = true;
+		if (/iteration/.test(arg)) iterationError = true;
 	});
 	log.apply(console, arguments);
 };
@@ -49,7 +51,8 @@ describe("gulp-flow", function () {
 
 		stream.on('end', function() {
 			setTimeout(function() {
-				should.equal(matched, true);
+				should.equal(stringError, true);
+				should.equal(iterationError, true);
 				done();
 			}, 1000);
 		});

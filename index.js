@@ -20,19 +20,29 @@ function executeFlow(PATH, callback) {
 		var result = {};
 		result.errors = parsed.errors.filter(function(error) {
 			error.message = error.message.filter(function(message, index) {
+				var isCurrentFile = message.path == PATH;
+				var result = false;
 				/**
 				 * If flow finds an issue related to a different file
 				 * it returns a separate json property along with
 				 * the different file path. We can check the previous
-				 * message to see if it ends with `with` or `found`, if
+				 * message to see if it ends with `with`, `found` or `in`, if
 				 * true we know that the next error is related to this one.
 				 */
-				if (/(with|found)$/.test(message.descr)) {
-					if (error.message[index + 1]) {
-						return error.message[index + 1].path == PATH;
+				var lineEnding = /(with|found|in)$/;
+				var previous = error.message[index - 1];
+				if (previous) {
+					if (lineEnding.test(previous.descr)) {
+						result = previous.path == PATH;
 					}
 				}
-				return PATH == message.path;
+				if (lineEnding.test(message.descr)) {
+					var nextMessage = error.message[index + 1];
+					if (nextMessage) {
+						result = nextMessage.path == PATH;
+					}
+				}
+				return isCurrentFile || result;
 			});
 			return error.message.length > 0;
 		});
