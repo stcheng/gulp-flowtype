@@ -19,6 +19,15 @@ gulp.task('typecheck', function() {
 });
 ```
 
+## Release History
+ * 2014-11-23    v0.3.0    Fix formatting issues
+ * 2014-11-21    v0.2.0    General improvements
+ * 2014-11-19    v0.1.0    Initial release
+
+
+## License
+
+MIT © Charlie Dowler
 
 [travis-url]: http://travis-ci.org/charliedowler/gulp-flowtype
 [travis-image]: https://secure.travis-ci.org/charliedowler/gulp-flowtype.png?branch=master
