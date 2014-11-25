@@ -10,12 +10,13 @@ var stylish = require('jshint-stylish/stylish').reporter;
 
 var passed = true;
 
-function executeFlow(PATH, callback) {
+function executeFlow(PATH, args, callback) {
 	var command = [
 		flowBin,
 		'check',
 		'/' + path.relative('/', PATH),
-		'--json'].join(' ');
+		'--json',
+		args.join(' ')].join(' ');
 
 	exec(command, function (err, stdout, stderr) {
 		var parsed = JSON.parse(stdout);
@@ -56,7 +57,11 @@ function executeFlow(PATH, callback) {
 	});
 }
 
-module.exports = function (param) {
+module.exports = function (options) {
+	var opts = options || {};
+	var args = [];
+	opts.all && args.push('--all');
+	opts.weak && args.push('--weak');
 	"use strict";
 	function flow(file, enc, callback) {
 		if (file.isNull()) {
@@ -73,15 +78,15 @@ module.exports = function (param) {
 
 			var contents = fs.readFileSync(file.path).toString();
 			var hasFlow = /\/(\*+) *@flow *(\*+)\//ig.test(contents);
-			if (hasFlow) {
+			if (hasFlow || opts.all) {
 				var configPath = path.join(PATH, '.flowconfig');
 				if (fs.existsSync(configPath)) {
-					executeFlow(file.path, function(result) {
+					executeFlow(file.path, args, function(result) {
 						callback();
 					});
 				} else {
 					fs.writeFile(configPath, '[ignore]\n[include]', function() {
-						executeFlow(file.path, function(result) {
+						executeFlow(file.path, args, function(result) {
 							fs.unlinkSync(configPath);
 							callback();
 						});

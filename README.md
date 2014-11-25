@@ -15,11 +15,27 @@ $ npm install --save-dev gulp-flowtype
 var flow = require('gulp-flowtype');
 gulp.task('typecheck', function() {
   return gulp.src('./*.js')
-    .pipe(flow());
+    .pipe(flow({
+        all: false,
+        weak: false
+    }));
 });
 ```
 
+### Options
+
+##### options.all
+Type: `Boolean`
+Default: `false`
+>Typecheck all files, not just @flow.
+
+##### options.weak
+Type: `Boolean`
+Default: `false`
+>Typecheck with weak inference, assuming dynamic types by default.
+
 ## Release History
+ * 2014-11-25    v0.3.2    Tweak success message, check file has `/* @flow */` before running flow and added options
  * 2014-11-23    v0.3.1    Changes to previous formatting fix
  * 2014-11-23    v0.3.0    Fix formatting issues
  * 2014-11-21    v0.2.0    General improvements
