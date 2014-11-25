@@ -71,22 +71,27 @@ module.exports = function (param) {
 		else if (file.isBuffer()) {
 			var PATH = path.dirname(file.path);
 
-			var configPath = path.join(PATH, '.flowconfig');
-
-			if (fs.existsSync(configPath)) {
-				executeFlow(file.path, function(result) {
-					callback();
-				});
-			}
-			else {
-				fs.writeFile(configPath, '[ignore]\n[include]', function() {
+			var contents = fs.readFileSync(file.path).toString();
+			var hasFlow = /\/(\*+) *@flow *(\*+)\//ig.test(contents);
+			if (hasFlow) {
+				var configPath = path.join(PATH, '.flowconfig');
+				if (fs.existsSync(configPath)) {
 					executeFlow(file.path, function(result) {
-						fs.unlinkSync(configPath);
 						callback();
 					});
-				});
+				} else {
+					fs.writeFile(configPath, '[ignore]\n[include]', function() {
+						executeFlow(file.path, function(result) {
+							fs.unlinkSync(configPath);
+							callback();
+						});
+					});
+				}
 			}
-
+			else {
+				this.push(file);
+				return callback();
+			}
 			this.push(file);
 		}
 	}
