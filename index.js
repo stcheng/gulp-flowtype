@@ -8,6 +8,8 @@ var exec = require('child_process').exec;
 var flowToJshint = require('flow-to-jshint');
 var stylish = require('jshint-stylish/stylish').reporter;
 
+var passed = true;
+
 function executeFlow(PATH, callback) {
 	var command = [
 		flowBin,
@@ -46,10 +48,8 @@ function executeFlow(PATH, callback) {
 			});
 			return error.message.length > 0;
 		});
-		if (parsed.passed) {
-			console.log(logSymbols.success + ' Flow has found 0 errors');
-		}
-		else if (result.errors.length) {
+		if (result.errors.length) {
+			passed = false;
 			stylish(flowToJshint(result));
 		}
 		callback && callback(result);
@@ -96,5 +96,10 @@ module.exports = function (param) {
 		}
 	}
 
-	return through.obj(flow);
+	return through.obj(flow, function() {
+		if (passed) {
+			console.log(logSymbols.success + ' Flow has found 0 errors');
+		}
+		this.emit('end');
+	});
 };
