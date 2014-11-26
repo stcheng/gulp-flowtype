@@ -51,7 +51,7 @@ describe("gulp-flow", function () {
 				should.equal(stringError, true);
 				should.equal(iterationError, true);
 				done();
-			}, 1000);
+			}, 500);
 		});
 		stream.write(srcFile);
 		stream.end();
@@ -84,7 +84,6 @@ describe("gulp-flow", function () {
 	});
 
 	it("should able to check with declarations", function (done) {
-		this.timeout(3000);
 		assertFile(getFixture('declaration.js'), {}, function() {
 			should.equal(moduleError, true);
 			moduleError = false;
@@ -123,7 +122,7 @@ describe("gulp-flow", function () {
 		stream.on('end', function() {
 			setTimeout(function() {
 				callback();
-			}, 1000);
+			}, 500);
 		});
 		stream.write(srcFile);
 		stream.end();
