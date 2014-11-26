@@ -41,7 +41,7 @@ Default: `empty`
 >The path to declared files (interfaces) to third-party libraries
 
 ## Release History
- * 2014-11-25    v0.3.2    Tweak success message, check file has `/* @flow */` before running flow and added options
+ * 2014-11-26    v0.4.0    Tweak success message, check file has `/* @flow */` before running flow and added options
  * 2014-11-23    v0.3.1    Changes to previous formatting fix
  * 2014-11-23    v0.3.0    Fix formatting issues
  * 2014-11-21    v0.2.0    General improvements
