@@ -1,4 +1,4 @@
-/* @flow */
+/* @flow weak */
 var fs = require('fs');
 var path = require('path');
 var gutil = require('gulp-util');
@@ -67,6 +67,7 @@ module.exports = function (options) {
 	/*jshint -W030 */
 	opts.all && args.push('--all');
 	opts.weak && args.push('--weak');
+	opts.declarations && args.push('--lib ' + opts.declarations);
 	function Flow(file, enc, callback) {
 		if (file.isNull()) {
 			this.push(file);
