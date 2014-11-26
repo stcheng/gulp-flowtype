@@ -17,11 +17,13 @@ var gutil = require("gulp-util"),
 var log = console.log;
 var stringError = false;
 var iterationError = false;
+var moduleError = false;
 
 console.log = function() {
 	Array.prototype.slice.call(arguments).forEach(function(arg) {
 		if (/string/.test(arg)) stringError = true;
 		if (/iteration/.test(arg)) iterationError = true;
+		if (/Required/.test(arg)) moduleError = true;
 	});
 	log.apply(console, arguments);
 };
@@ -29,13 +31,8 @@ console.log = function() {
 describe("gulp-flow", function () {
 
 	it("should produce expected file via buffer", function (done) {
-		var _path = '/' + path.relative('/', 'test/fixtures/hello.js');
-		var srcFile = new gutil.File({
-			path: _path,
-			cwd: "test/",
-			base: "test/fixtures",
-			contents: fs.readFileSync(_path)
-		});
+
+		var srcFile = getFixture('hello.js');
 
 		var stream = flow();
 
@@ -85,5 +82,51 @@ describe("gulp-flow", function () {
 		stream.write(srcFile);
 		stream.end();
 	});
+
+	it("should able to check with declarations", function (done) {
+		this.timeout(3000);
+		assertFile(getFixture('declaration.js'), {}, function() {
+			should.equal(moduleError, true);
+			moduleError = false;
+			assertFile(getFixture('declaration.js'), {
+				declarations: './test/fixtures/interfaces'
+			}, function() {
+				should.equal(moduleError, false);
+				done();
+			});
+		});
+
+	});
+
+	function getFixture(name) {
+		var _path = '/' + path.relative('/', 'test/fixtures/' + name);
+		return new gutil.File({
+			path: _path,
+			cwd: "test/",
+			base: "test/fixtures",
+			contents: fs.readFileSync(_path)
+		});
+	}
+
+	function assertFile(srcFile, flowOptions, callback) {
+		var stream = flow(flowOptions);
+		stream.on("error", function(err) {
+			should.exist(err);
+			callback(err);
+		});
+
+		stream.on("data", function (newFile) {
+			should.exist(newFile);
+			should.exist(newFile.contents);
+		});
+
+		stream.on('end', function() {
+			setTimeout(function() {
+				callback();
+			}, 1000);
+		});
+		stream.write(srcFile);
+		stream.end();
+	}
 
 });

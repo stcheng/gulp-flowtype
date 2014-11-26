@@ -35,7 +35,7 @@ Type: `Boolean`
 Default: `false`
 >Typecheck with weak inference, assuming dynamic types by default.
 
-##### options.weak
+##### options.declarations
 Type: `String`
 Default: `empty`
 >The path to declared files (interfaces) to third-party libraries
