@@ -12,6 +12,7 @@
   },
   "repository": "charliedowler/gulp-flowtype",
   "scripts": {
+    "lint": "./node_modules/.bin/jshint **.js && flow check",
     "test": "istanbul test _mocha --report html -- test/*.js --reporter spec",
     "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
@@ -20,6 +21,7 @@
     "flow-bin": "~0.1.1",
     "flow-to-jshint": "~0.2.0",
     "gulp-util": "~3.0.1",
+    "jshint": "^2.5.10",
     "jshint-stylish": "~1.0.0",
     "log-symbols": "^1.0.1",
     "through2": "~0.6.3"
@@ -27,8 +29,6 @@
   "devDependencies": {
     "coveralls": "~2.11.2",
     "event-stream": "~3.1.7",
-    "gulp": "~3.8.10",
-    "gulp-jshint": "^1.9.0",
     "istanbul": "~0.3.2",
     "mocha": "~2.0.1",
     "mocha-lcov-reporter": "~0.0.1",

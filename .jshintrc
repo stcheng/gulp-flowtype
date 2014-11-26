@@ -1,6 +1,6 @@
 {
     "node": true,
-    "esnext": true,
+    "esnext": false,
     "bitwise": true,
     "camelcase": true,
     "curly": true,
@@ -10,7 +10,7 @@
     "latedef": true,
     "newcap": true,
     "noarg": true,
-    "quotmark": "double",
+    "quotmark": "single",
     "regexp": true,
     "undef": true,
     "unused": true,
