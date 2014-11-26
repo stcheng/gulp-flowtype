@@ -47,6 +47,13 @@ Default: `empty`
  * 2014-11-21    v0.2.0    General improvements
  * 2014-11-19    v0.1.0    Initial release
 
+## Contributing
+1. Write test (if applicable)
+2. Write code
+3. Make tests pass
+4. Execute `npm run lint` and make amendments if needed
+5. Create pull request
+6. Rinse and repeat
 
 ## License
 
