@@ -7,7 +7,8 @@ var flowBin = require('flow-bin');
 var logSymbols = require('log-symbols');
 var exec = require('child_process').exec;
 var flowToJshint = require('flow-to-jshint');
-var stylish = require('jshint-stylish/stylish').reporter;
+var stylish = require('jshint-stylish');
+var reporter = require(stylish).reporter;
 
 var passed = true;
 
@@ -53,7 +54,7 @@ function executeFlow(PATH, args, callback) {
 		});
 		if (result.errors.length) {
 			passed = false;
-			stylish(flowToJshint(result));
+      reporter(flowToJshint(result));
 		}
 		/*jshint -W030 */
 		callback && callback(result);

@@ -1,3 +1,1 @@
-declare module 'jshint-stylish/stylish.js' {
-  declare function reporter(): void;
-}
+declare module 'jshint-stylish' {}
