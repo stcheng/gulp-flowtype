@@ -17,7 +17,8 @@ gulp.task('typecheck', function() {
   return gulp.src('./*.js')
     .pipe(flow({
         all: false,
-        weak: false
+        weak: false,
+        declarations: './lib/flow'
     }));
 });
 ```
@@ -33,6 +34,11 @@ Default: `false`
 Type: `Boolean`
 Default: `false`
 >Typecheck with weak inference, assuming dynamic types by default.
+
+##### options.weak
+Type: `String`
+Default: `empty`
+>The path to declared files (interfaces) to third-party libraries
 
 ## Release History
  * 2014-11-25    v0.3.2    Tweak success message, check file has `/* @flow */` before running flow and added options
