@@ -23,6 +23,19 @@ gulp.task('typecheck', function() {
 });
 ```
 
+If you need to [strip out type annotations](http://flowtype.org/docs/running.html), you can use the stripTypes option from gulp-react:
+
+```js
+var flow = require('gulp-flowtype');
+var react = require('gulp-react');
+gulp.task('typecheck', function() {
+  return gulp.src('./*.js')
+    .pipe(flow({ all: false, weak: false, declarations: './lib/flow' }))
+    .pipe(react({ stripTypes: true }))
+    .pipe(gulp.dest('./out'));
+});
+```
+
 ### Options
 
 ##### options.all
