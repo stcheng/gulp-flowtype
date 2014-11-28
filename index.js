@@ -82,9 +82,14 @@ module.exports = function (options) {
     else if (file.isBuffer()) {
       var PATH = path.dirname(file.path);
 
-      var contents = fs.readFileSync(file.path).toString();
-      var hasFlow = /\/(\*+) *@flow *(\*+)\//ig.test(contents);
-      if (hasFlow || opts.all) {
+      var hasFlow = opts.all;
+
+      if (!hasFlow) {
+        var contents = fs.readFileSync(file.path).toString();
+        hasFlow = /\/(\*+) *@flow *(\*+)\//ig.test(contents);
+      }
+
+      if (hasFlow) {
         var configPath = path.join(PATH, '.flowconfig');
         if (fs.existsSync(configPath)) {
           executeFlow(file.path, args, function () {
