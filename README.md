@@ -12,14 +12,18 @@ $ npm install --save-dev gulp-flowtype
 ### Usage
 
 ```js
+var react = require('gulp-react');
 var flow = require('gulp-flowtype');
+
 gulp.task('typecheck', function() {
   return gulp.src('./*.js')
     .pipe(flow({
         all: false,
         weak: false,
         declarations: './lib/flow'
-    }));
+    }))
+    .pipe(react({ stripTypes: true })) // Strip Flow type annotations before compiling
+    .pipe(gulp.dest('./out'));
 });
 ```
 
