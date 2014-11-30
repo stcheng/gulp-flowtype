@@ -1,27 +1,26 @@
 /* @flow weak */
+'use strict';
 var fs = require('fs');
 var path = require('path');
 var gutil = require('gulp-util');
 var through = require('through2');
 var flowBin = require('flow-bin');
 var logSymbols = require('log-symbols');
-var exec = require('child_process').exec;
+var execFile = require('child_process').execFile;
 var flowToJshint = require('flow-to-jshint');
 var stylish = require('jshint-stylish');
 var reporter = require(stylish).reporter;
 
 var passed = true;
 
-function executeFlow(PATH, args, callback) {
-  'use strict';
-  var command = [
-    flowBin,
+function executeFlow(PATH, flowArgs, callback) {
+  var args = [
     'check',
     '/' + path.relative('/', PATH),
-    '--json',
-    args.join(' ')].join(' ');
+    '--json'
+  ].concat(flowArgs);
 
-  exec(command, function (err, stdout) {
+  execFile(flowBin, args, function (err, stdout) {
     var parsed = JSON.parse(stdout);
     var result = {};
     result.errors = parsed.errors.filter(function (error) {
@@ -62,13 +61,12 @@ function executeFlow(PATH, args, callback) {
 }
 
 module.exports = function (options) {
-  'use strict';
   var opts = options || {};
   var args = [];
   /*jshint -W030 */
   opts.all && args.push('--all');
   opts.weak && args.push('--weak');
-  opts.declarations && args.push('--lib ' + opts.declarations);
+  opts.declarations && args.push('--lib') && args.push(opts.declarations);
   function Flow(file, enc, callback) {
     if (file.isNull()) {
       this.push(file);
@@ -81,14 +79,11 @@ module.exports = function (options) {
     }
     else if (file.isBuffer()) {
       var PATH = path.dirname(file.path);
-
       var hasFlow = opts.all;
-
       if (!hasFlow) {
         var contents = fs.readFileSync(file.path).toString();
         hasFlow = /\/(\*+) *@flow *(\*+)\//ig.test(contents);
       }
-
       if (hasFlow) {
         var configPath = path.join(PATH, '.flowconfig');
         if (fs.existsSync(configPath)) {

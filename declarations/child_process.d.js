@@ -1,3 +1,3 @@
 declare module 'child_process' {
-  declare function exec(command: string, callback: any) : void;
+  declare function execFile(command: string, args: string[], callback: any) : void;
 }
