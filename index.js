@@ -55,8 +55,7 @@ function executeFlow(PATH, flowArgs, callback) {
       passed = false;
       reporter(flowToJshint(result));
     }
-    /*jshint -W030 */
-    callback && callback(result);
+    callback();
   });
 }
 
@@ -78,18 +77,15 @@ module.exports = function (options) {
       return callback();
     }
     else if (file.isBuffer()) {
-      var PATH = path.dirname(file.path);
       var hasFlow = opts.all;
       if (!hasFlow) {
         var contents = fs.readFileSync(file.path).toString();
         hasFlow = /\/(\*+) *@flow *(\*+)\//ig.test(contents);
       }
       if (hasFlow) {
-        var configPath = path.join(PATH, '.flowconfig');
+        var configPath = path.join(path.dirname(file.path), '.flowconfig');
         if (fs.existsSync(configPath)) {
-          executeFlow(file.path, args, function () {
-            callback();
-          });
+          executeFlow(file.path, args, callback);
         } else {
           fs.writeFile(configPath, '[ignore]\n[include]', function () {
             executeFlow(file.path, args, function () {
