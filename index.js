@@ -83,16 +83,11 @@ module.exports = function (options) {
         hasFlow = /\/(\*+) *@flow *(\*+)\//ig.test(contents);
       }
       if (hasFlow) {
-        var configPath = path.join(path.dirname(file.path), '.flowconfig');
+        var configPath = path.join(process.cwd(), '.flowconfig');
         if (fs.existsSync(configPath)) {
           executeFlow(file.path, args, callback);
         } else {
-          fs.writeFile(configPath, '[ignore]\n[include]', function () {
-            executeFlow(file.path, args, function () {
-              fs.unlinkSync(configPath);
-              callback();
-            });
-          });
+          console.log(logSymbols.warning + ' Missing .flowconfig in the current working directory.');
         }
       }
       else {
