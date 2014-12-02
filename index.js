@@ -15,7 +15,7 @@ var passed = true;
 
 function executeFlow(PATH, flowArgs, callback) {
   var args = [
-    'check',
+    'status',
     '/' + path.relative('/', PATH),
     '--json'
   ].concat(flowArgs);
@@ -65,7 +65,6 @@ module.exports = function (options) {
   /*jshint -W030 */
   opts.all && args.push('--all');
   opts.weak && args.push('--weak');
-  opts.declarations && args.push('--lib') && args.push(opts.declarations);
   function Flow(file, enc, callback) {
     if (file.isNull()) {
       this.push(file);
@@ -102,6 +101,15 @@ module.exports = function (options) {
     if (passed) {
       console.log(logSymbols.success + ' Flow has found 0 errors');
     }
-    this.emit('end');
+
+    if(opts.killFlow) {
+      execFile(flowBin, ['stop'], function() {
+        this.emit('end');
+      }.bind(this));
+    } else {
+      this.emit('end');
+    }
+
+    
   });
 };

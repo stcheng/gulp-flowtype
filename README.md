@@ -20,7 +20,7 @@ gulp.task('typecheck', function() {
     .pipe(flow({
         all: false,
         weak: false,
-        declarations: './lib/flow'
+        killFlow: false
     }))
     .pipe(react({ stripTypes: true })) // Strip Flow type annotations before compiling
     .pipe(gulp.dest('./out'));
@@ -39,10 +39,10 @@ Type: `Boolean`
 Default: `false`
 >Typecheck with weak inference, assuming dynamic types by default.
 
-##### options.declarations
-Type: `String`
-Default: `empty`
->The path to declared files (interfaces) to third-party libraries
+##### options.killFlow
+Type: `Boolean`
+Default: `false`
+>Kills the Flow server after Typecheck is finished.
 
 ## Release History
  * 2014-11-26    v0.4.0    Tweak success message, check file has `/* @flow */` before running flow and added options
