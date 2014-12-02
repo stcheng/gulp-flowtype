@@ -103,7 +103,7 @@ module.exports = function (options) {
     }
 
     if(opts.killFlow) {
-      execFile(flowBin, ['stop'], function(err, stdout) {
+      execFile(flowBin, ['stop'], function() {
         this.emit('end');
       }.bind(this));
     } else {
