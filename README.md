@@ -20,6 +20,7 @@ gulp.task('typecheck', function() {
     .pipe(flow({
         all: false,
         weak: false,
+        declarations: './declarations',
         killFlow: false
     }))
     .pipe(react({ stripTypes: true })) // Strip Flow type annotations before compiling
@@ -38,6 +39,11 @@ Default: `false`
 Type: `Boolean`
 Default: `false`
 >Typecheck with weak inference, assuming dynamic types by default.
+
+##### options.declarations
+Type: `String`
+Default: `empty`
+>The path to declared files (interfaces) to third-party libraries
 
 ##### options.killFlow
 Type: `Boolean`

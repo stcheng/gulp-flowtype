@@ -42,7 +42,7 @@ declare module "fs" {
   // export function realpath(path: string, cache: {[path: string]: string}, callback: (err: NodeJS.ErrnoException, resolvedPath: string) =>any): void;
   // export function realpathSync(path: string, cache?: {[path: string]: string}): string;
   // export function unlink(path: string, callback?: (err?: NodeJS.ErrnoException) => void): void;
-  declare function unlinkSync(path: string): void;
+  // declare function unlinkSync(path: string): void;
   // export function rmdir(path: string, callback?: (err?: NodeJS.ErrnoException) => void): void;
   // export function rmdirSync(path: string): void;
   // export function mkdir(path: string, callback?: (err?: NodeJS.ErrnoException) => void): void;
@@ -80,9 +80,9 @@ declare module "fs" {
   declare function readFileSync(filename: string, encoding: string): string;
   declare function readFileSync(filename: string, options: { encoding: string; flag?: string; }): string;
   declare function readFileSync(filename: string, options?: { flag?: string; }): any;
-  declare function writeFile(filename: string, data: any, callback?: () => void): void;
-  declare function writeFile(filename: string, data: any, options: { encoding?: string; mode?: number; flag?: string; }, callback?: (err: any) => void): void;
-  declare function writeFile(filename: string, data: any, options: { encoding?: string; mode?: string; flag?: string; }, callback?: (err: any) => void): void;
+  // declare function writeFile(filename: string, data: any, callback?: () => void): void;
+  // declare function writeFile(filename: string, data: any, options: { encoding?: string; mode?: number; flag?: string; }, callback?: (err: any) => void): void;
+  // declare function writeFile(filename: string, data: any, options: { encoding?: string; mode?: string; flag?: string; }, callback?: (err: any) => void): void;
   // export function writeFileSync(filename: string, data: any, options?: { encoding?: string; mode?: number; flag?: string; }): void;
   // export function writeFileSync(filename: string, data: any, options?: { encoding?: string; mode?: string; flag?: string; }): void;
   // export function appendFile(filename: string, data: any, options: { encoding?: string; mode?: number; flag?: string; }, callback?: (err: NodeJS.ErrnoException) => void): void;

@@ -84,6 +84,20 @@ describe("gulp-flow", function () {
     stream.end();
   });
 
+  it("should able to check with declarations", function (done) {
+    assertFile(getFixture('declaration.js'), {}, function () {
+      should.equal(moduleError, true);
+      moduleError = false;
+      assertFile(getFixture('declaration.js'), {
+        declarations: './test/fixtures/interfaces'
+      }, function () {
+        should.equal(moduleError, false);
+        done();
+      });
+    });
+
+  });
+
   function getFixture(name) {
     var _path = '/' + path.relative('/', 'test/fixtures/' + name);
     return new gutil.File({

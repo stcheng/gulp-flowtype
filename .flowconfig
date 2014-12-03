@@ -2,5 +2,3 @@
 .*/node_modules/*
 .*/test/*
 [include]
-[libs]
-./test/fixtures/interfaces
