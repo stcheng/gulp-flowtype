@@ -13,6 +13,20 @@ var reporter = require(stylish).reporter;
 
 var passed = true;
 
+function fatalError(stderr) {
+  return {
+    errors: [{
+      message: [{
+        path: '',
+        code: 0,
+        line: 0,
+        col: 0,
+        descr: stderr
+      }]
+    }]
+  };
+}
+
 function executeFlow(PATH, flowArgs, callback) {
   var command = flowArgs.length ? 'check' : 'status';
   var args = [
@@ -21,8 +35,8 @@ function executeFlow(PATH, flowArgs, callback) {
     '--json'
   ].concat(flowArgs);
 
-  execFile(flowBin, args, function (err, stdout) {
-    var parsed = JSON.parse(stdout);
+  execFile(flowBin, args, function (err, stdout, stderr) {
+    var parsed = !stderr ? JSON.parse(stdout) : fatalError(stderr);
     var result = {};
     result.errors = parsed.errors.filter(function (error) {
       error.message = error.message.filter(function (message, index) {
@@ -48,7 +62,8 @@ function executeFlow(PATH, flowArgs, callback) {
             result = nextMessage.path === PATH;
           }
         }
-        return isCurrentFile || result;
+        var generalError = (/(Fatal)/.test(message.descr));
+        return isCurrentFile || result || generalError;
       });
       return error.message.length > 0;
     });
@@ -112,6 +127,6 @@ module.exports = function (options) {
       this.emit('end');
     }
 
-    
+
   });
 };
