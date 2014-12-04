@@ -1,4 +1,4 @@
-## gulp-flowtype [![Build Status][travis-image]][travis-url] [![NPM version][npm-image]][npm-url] [![Dependency Status][depstat-image]][depstat-url]
+## gulp-flowtype [![Build Status][travis-image]][travis-url] [![NPM version][npm-image]][npm-url] [![Dependency Status][depstat-image]][depstat-url] [![Gitter chat][gitter-image]][gitter-url]
 
 > Run [Facebook's Flow](http://flowtype.org/) in your gulp pipeline
 
@@ -80,3 +80,6 @@ MIT © Charlie Dowler
 
 [depstat-url]: https://david-dm.org/charliedowler/gulp-flowtype
 [depstat-image]: https://david-dm.org/charliedowler/gulp-flowtype.png
+
+[gitter-url]: https://gitter.im/charliedowler/gulp-flowtype
+[gitter-image]: https://badges.gitter.im/gitterHQ/gitter.png
