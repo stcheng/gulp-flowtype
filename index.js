@@ -13,6 +13,8 @@ var reporter = require(stylish).reporter;
 
 var passed = true;
 
+var servers = [];
+
 function executeFlow(PATH, flowArgs, callback) {
   var command = flowArgs.length ? 'check' : 'status';
   var args = [
@@ -20,6 +22,10 @@ function executeFlow(PATH, flowArgs, callback) {
     '/' + path.relative('/', PATH),
     '--json'
   ].concat(flowArgs);
+
+  if (command === 'check') {
+    servers.push(path.dirname(PATH));
+  }
 
   execFile(flowBin, args, function (err, stdout) {
     var parsed = JSON.parse(stdout);
@@ -105,9 +111,14 @@ module.exports = function (options) {
     }
 
     if(opts.killFlow) {
-      execFile(flowBin, ['stop'], function() {
-        this.emit('end');
-      }.bind(this));
+      if (!servers.length) this.emit('end');
+      servers.forEach(function(path, index) {
+        execFile(flowBin, ['stop'], { cwd: path }, function() {
+          if (!servers[index + 1]) {
+            this.emit('end');
+          }
+        }.bind(this));
+      }, this);
     } else {
       this.emit('end');
     }

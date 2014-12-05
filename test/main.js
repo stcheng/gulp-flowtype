@@ -6,6 +6,8 @@ var fs = require("fs"),
   es = require("event-stream"),
   should = require("should");
 var path = require('path');
+var execFile = require('child_process').execFile;
+var flowBin = require('flow-bin');
 
 require("mocha");
 
@@ -95,7 +97,17 @@ describe("gulp-flow", function () {
         done();
       });
     });
+  });
 
+  it("should kill flow after running", function (done) {
+    assertFile(getFixture('declaration.js'), {
+      killFlow: true
+    }, function () {
+      execFile(flowBin, ['status', '--no-auto-start'], function(err, stdout, stderr) {
+        should.equal(/no flow server running/.test(stderr), true);
+        done();
+      });
+    });
   });
 
   function getFixture(name) {
