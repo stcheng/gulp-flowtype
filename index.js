@@ -6,10 +6,10 @@ var gutil = require('gulp-util');
 var through = require('through2');
 var flowBin = require('flow-bin');
 var logSymbols = require('log-symbols');
-var execFile = require('child_process').execFile;
-var flowToJshint = require('flow-to-jshint');
 var stylish = require('jshint-stylish');
 var reporter = require(stylish).reporter;
+var flowToJshint = require('flow-to-jshint');
+var execFile = require('child_process').execFile;
 
 var passed = true;
 
@@ -122,7 +122,5 @@ module.exports = function (options) {
     } else {
       this.emit('end');
     }
-
-    
   });
 };
