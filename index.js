@@ -68,6 +68,7 @@ function executeFlow(PATH, flowArgs, callback) {
 
 module.exports = function (options) {
   var opts = options || {};
+  opts.beep = typeof opts.beep != 'undefined' ? opts.beep : true;
   var args = [];
   /*jshint -W030 */
   opts.all && args.push('--all');
@@ -108,6 +109,9 @@ module.exports = function (options) {
   return through.obj(Flow, function () {
     if (passed) {
       console.log(logSymbols.success + ' Flow has found 0 errors');
+    }
+    else if (!passed && opts.beep){
+      gutil.beep();
     }
 
     if(opts.killFlow) {

@@ -50,6 +50,11 @@ Type: `Boolean`
 Default: `false`
 >Kills the Flow server after Typecheck is finished.
 
+##### options.beep
+Type: `Boolean`
+Default: `true`
+>Notify your command prompt of a Typecheck error with a beep
+
 ## Release History
  * 2014-11-26    v0.4.0    Tweak success message, check file has `/* @flow */` before running flow and added options
  * 2014-11-23    v0.3.1    Changes to previous formatting fix
