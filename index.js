@@ -11,9 +11,8 @@ var reporter = require(stylish).reporter;
 var flowToJshint = require('flow-to-jshint');
 var execFile = require('child_process').execFile;
 
-var passed = true;
-
 var servers = [];
+var passed = true;
 
 function executeFlow(PATH, flowArgs, callback) {
   var command = flowArgs.length ? 'check' : 'status';
@@ -68,12 +67,20 @@ function executeFlow(PATH, flowArgs, callback) {
 
 module.exports = function (options) {
   var opts = options || {};
-  opts.beep = typeof opts.beep != 'undefined' ? opts.beep : true;
+  opts.beep = typeof opts.beep !== 'undefined' ? opts.beep : true;
+
   var args = [];
-  /*jshint -W030 */
-  opts.all && args.push('--all');
-  opts.weak && args.push('--weak');
-  opts.declarations && args.push('--lib') && args.push(opts.declarations);
+  if (opts.all) {
+    args.push('--all');
+  }
+  if (opts.weak) {
+    args.push('--weak');
+  }
+  if (opts.declarations) {
+    args.push('--lib');
+    args.push(opts.declarations);
+  }
+
   function Flow(file, enc, callback) {
     if (file.isNull()) {
       this.push(file);
@@ -115,7 +122,9 @@ module.exports = function (options) {
     }
 
     if(opts.killFlow) {
-      if (!servers.length) this.emit('end');
+      if (!servers.length) {
+        this.emit('end');
+      }
       servers.forEach(function(path, index) {
         execFile(flowBin, ['stop'], { cwd: path }, function() {
           if (!servers[index + 1]) {

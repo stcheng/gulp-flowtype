@@ -21,7 +21,8 @@ gulp.task('typecheck', function() {
         all: false,
         weak: false,
         declarations: './declarations',
-        killFlow: false
+        killFlow: false,
+        beep: true
     }))
     .pipe(react({ stripTypes: true })) // Strip Flow type annotations before compiling
     .pipe(gulp.dest('./out'));
