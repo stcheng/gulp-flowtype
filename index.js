@@ -6,13 +6,15 @@ var gutil = require('gulp-util');
 var through = require('through2');
 var flowBin = require('flow-bin');
 var logSymbols = require('log-symbols');
-var execFile = require('child_process').execFile;
-var flowToJshint = require('flow-to-jshint');
 var stylish = require('jshint-stylish');
 var reporter = require(stylish).reporter;
+var flowToJshint = require('flow-to-jshint');
+var execFile = require('child_process').execFile;
 
+var servers = [];
 var passed = true;
 
+/* Wrap critical Flow exception into default Error json format */
 function fatalError(stderr) {
   return {
     errors: [{
@@ -35,6 +37,9 @@ function executeFlow(PATH, flowArgs, callback) {
     '--json'
   ].concat(flowArgs);
 
+  if (command === 'check') {
+    servers.push(path.dirname(PATH));
+  }
   execFile(flowBin, args, function (err, stdout, stderr) {
     var parsed = !stderr ? JSON.parse(stdout) : fatalError(stderr);
     var result = {};
@@ -77,11 +82,20 @@ function executeFlow(PATH, flowArgs, callback) {
 
 module.exports = function (options) {
   var opts = options || {};
+  opts.beep = typeof opts.beep !== 'undefined' ? opts.beep : true;
+
   var args = [];
-  /*jshint -W030 */
-  opts.all && args.push('--all');
-  opts.weak && args.push('--weak');
-  opts.declarations && args.push('--lib') && args.push(opts.declarations);
+  if (opts.all) {
+    args.push('--all');
+  }
+  if (opts.weak) {
+    args.push('--weak');
+  }
+  if (opts.declarations) {
+    args.push('--lib');
+    args.push(opts.declarations);
+  }
+
   function Flow(file, enc, callback) {
     if (file.isNull()) {
       this.push(file);
@@ -118,15 +132,24 @@ module.exports = function (options) {
     if (passed) {
       console.log(logSymbols.success + ' Flow has found 0 errors');
     }
+    else if (!passed && opts.beep){
+      gutil.beep();
+    }
 
     if(opts.killFlow) {
-      execFile(flowBin, ['stop'], function() {
+      if (!servers.length) {
         this.emit('end');
-      }.bind(this));
+      }
+      servers.forEach(function(path, index) {
+        execFile(flowBin, ['stop'], { cwd: path }, function() {
+          if (!servers[index + 1]) {
+            this.emit('end');
+          }
+        }.bind(this));
+      }, this);
     } else {
       this.emit('end');
     }
-
 
   });
 };

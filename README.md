@@ -1,4 +1,4 @@
-## gulp-flowtype [![Build Status][travis-image]][travis-url] [![NPM version][npm-image]][npm-url] [![Dependency Status][depstat-image]][depstat-url]
+## gulp-flowtype [![Build Status][travis-image]][travis-url] [![NPM version][npm-image]][npm-url] [![Dependency Status][depstat-image]][depstat-url] [![Gitter chat][gitter-image]][gitter-url]
 
 > Run [Facebook's Flow](http://flowtype.org/) in your gulp pipeline
 
@@ -21,7 +21,8 @@ gulp.task('typecheck', function() {
         all: false,
         weak: false,
         declarations: './declarations',
-        killFlow: false
+        killFlow: false,
+        beep: true
     }))
     .pipe(react({ stripTypes: true })) // Strip Flow type annotations before compiling
     .pipe(gulp.dest('./out'));
@@ -50,7 +51,13 @@ Type: `Boolean`
 Default: `false`
 >Kills the Flow server after Typecheck is finished.
 
+##### options.beep
+Type: `Boolean`
+Default: `true`
+>Notify your command prompt of a Typecheck error with a beep
+
 ## Release History
+ * 2014-12-13    v0.4.1    Performance improvements
  * 2014-11-26    v0.4.0    Tweak success message, check file has `/* @flow */` before running flow and added options
  * 2014-11-23    v0.3.1    Changes to previous formatting fix
  * 2014-11-23    v0.3.0    Fix formatting issues
@@ -80,3 +87,6 @@ MIT © Charlie Dowler
 
 [depstat-url]: https://david-dm.org/charliedowler/gulp-flowtype
 [depstat-image]: https://david-dm.org/charliedowler/gulp-flowtype.png
+
+[gitter-url]: https://gitter.im/charliedowler/gulp-flowtype
+[gitter-image]: https://badges.gitter.im/gitterHQ/gitter.png

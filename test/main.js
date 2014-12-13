@@ -1,48 +1,49 @@
 /* @flow */
 /*global describe, it*/
-"use strict";
+'use strict';
 
-var fs = require("fs"),
-  es = require("event-stream"),
-  should = require("should");
+require('mocha');
+var fs = require('fs');
+var flow = require('../');
 var path = require('path');
+var should = require('should');
+var gutil = require('gulp-util');
+var es = require('event-stream');
+var flowBin = require('flow-bin');
+var execFile = require('child_process').execFile;
 
-require("mocha");
 
-delete require.cache[require.resolve("../")];
-
-var gutil = require("gulp-util"),
-  flow = require("../");
+delete require.cache[require.resolve('../')];
 
 var log = console.log;
 var stringError = false;
-var iterationError = false;
 var moduleError = false;
+var iterationError = false;
 
 console.log = function () {
   Array.prototype.slice.call(arguments).forEach(function (arg) {
     if (/string/.test(arg)) stringError = true;
-    if (/iteration/.test(arg)) iterationError = true;
     if (/Required/.test(arg)) moduleError = true;
+    if (/iteration/.test(arg)) iterationError = true;
   });
   log.apply(console, arguments);
 };
 
-describe("gulp-flow", function () {
+describe('gulp-flow', function () {
   this.timeout(5000);
 
-  it("should produce expected file via buffer", function (done) {
+  it('should produce expected file via buffer', function (done) {
 
     var srcFile = getFixture('hello.js');
 
     var stream = flow();
 
-    stream.on("error", function (err) {
+    stream.on('error', function (err) {
       should.exist(err);
       done(err);
     });
 
-    stream.on("data", function (newFile) {
+    stream.on('data', function (newFile) {
       should.exist(newFile);
       should.exist(newFile.contents);
     });
@@ -58,23 +59,23 @@ describe("gulp-flow", function () {
     stream.end();
   });
 
-  it("should error on stream", function (done) {
+  it('should error on stream', function (done) {
 
     var srcFile = new gutil.File({
-      path: "test/fixtures/hello.js",
-      cwd: "test/",
-      base: "test/fixtures",
-      contents: fs.createReadStream("test/fixtures/hello.js")
+      path: 'test/fixtures/hello.js',
+      cwd: 'test/',
+      base: 'test/fixtures',
+      contents: fs.createReadStream('test/fixtures/hello.js')
     });
 
     var stream = flow();
 
-    stream.on("error", function (err) {
+    stream.on('error', function (err) {
       should.exist(err);
       done();
     });
 
-    stream.on("data", function (newFile) {
+    stream.on('data', function (newFile) {
       newFile.contents.pipe(es.wait(function (err, data) {
         done(err);
       }));
@@ -84,7 +85,7 @@ describe("gulp-flow", function () {
     stream.end();
   });
 
-  it("should able to check with declarations", function (done) {
+  it('should able to check with declarations', function (done) {
     assertFile(getFixture('declaration.js'), {}, function () {
       should.equal(moduleError, true);
       moduleError = false;
@@ -95,27 +96,50 @@ describe("gulp-flow", function () {
         done();
       });
     });
+  });
 
+  it('should able to detect broken declarations', function (done) {
+    assertFile(getFixture('declaration.js'), {}, function () {
+      should.equal(moduleError, true);
+      moduleError = false;
+      assertFile(getFixture('declaration.js'), {
+        declarations: './test/fixtures/broken-interfaces'
+      }, function () {
+        should.equal(moduleError, false);
+        done();
+      });
+    });
+  });
+
+  it('should kill flow after running', function (done) {
+    assertFile(getFixture('declaration.js'), {
+      killFlow: true
+    }, function () {
+      execFile(flowBin, ['status', '--no-auto-start'], function(err, stdout, stderr) {
+        should.equal(/no flow server running/.test(stderr), true);
+        done();
+      });
+    });
   });
 
   function getFixture(name) {
     var _path = '/' + path.relative('/', 'test/fixtures/' + name);
     return new gutil.File({
       path: _path,
-      cwd: "test/",
-      base: "test/fixtures",
+      cwd: 'test/',
+      base: 'test/fixtures',
       contents: fs.readFileSync(_path)
     });
   }
 
   function assertFile(srcFile, flowOptions, callback) {
     var stream = flow(flowOptions);
-    stream.on("error", function (err) {
+    stream.on('error', function (err) {
       should.exist(err);
       callback(err);
     });
 
-    stream.on("data", function (newFile) {
+    stream.on('data', function (newFile) {
       should.exist(newFile);
       should.exist(newFile.contents);
     });
@@ -123,7 +147,7 @@ describe("gulp-flow", function () {
     stream.on('end', function () {
       setTimeout(function () {
         callback();
-      }, 500);
+      }, 1000);
     });
     stream.write(srcFile);
     stream.end();

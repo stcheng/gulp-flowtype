@@ -1,6 +1,6 @@
 {
   "name": "gulp-flowtype",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Run Facebook's Flow in your gulp pipeline",
   "keywords": [
     "gulp",
@@ -12,7 +12,7 @@
   },
   "repository": "charliedowler/gulp-flowtype",
   "scripts": {
-    "lint": "./node_modules/.bin/jshint **.js && flow check --lib ./declarations/",
+    "lint": "./node_modules/.bin/jshint **.js && flow check",
     "test": "istanbul test _mocha --report html -- test/*.js --reporter spec",
     "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "coveralls": "~2.11.2",
-    "event-stream": "~3.1.7",
     "istanbul": "~0.3.2",
     "mocha": "~2.0.1",
     "mocha-lcov-reporter": "~0.0.1",
