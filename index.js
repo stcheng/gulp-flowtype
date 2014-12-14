@@ -42,6 +42,7 @@ function executeFlow(PATH, flowArgs, callback) {
   if (command === 'check') {
     servers.push(path.dirname(PATH));
   }
+
   execFile(flowBin, args, function (err, stdout, stderr) {
     if (stderr && /server launched/.test(stderr)) {
       /**
@@ -159,6 +160,5 @@ module.exports = function (options) {
     } else {
       this.emit('end');
     }
-
   });
 };
