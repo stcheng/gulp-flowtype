@@ -12,7 +12,7 @@
   },
   "repository": "charliedowler/gulp-flowtype",
   "scripts": {
-    "lint": "./node_modules/.bin/jshint **.js && flow check",
+    "lint": "./node_modules/.bin/jshint **.js && flow check --lib ./declarations/",
     "test": "istanbul test _mocha --report html -- test/*.js --reporter spec",
     "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
