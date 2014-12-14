@@ -98,6 +98,19 @@ describe('gulp-flow', function () {
     });
   });
 
+  it('should able to detect broken declarations', function (done) {
+    assertFile(getFixture('declaration.js'), {}, function () {
+      should.equal(moduleError, true);
+      moduleError = false;
+      assertFile(getFixture('declaration.js'), {
+        declarations: './test/fixtures/broken-interfaces'
+      }, function () {
+        should.equal(moduleError, false);
+        done();
+      });
+    });
+  });
+
   it('should kill flow after running', function (done) {
     assertFile(getFixture('declaration.js'), {
       killFlow: true
@@ -134,7 +147,7 @@ describe('gulp-flow', function () {
     stream.on('end', function () {
       setTimeout(function () {
         callback();
-      }, 500);
+      }, 1000);
     });
     stream.write(srcFile);
     stream.end();
