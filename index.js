@@ -14,7 +14,9 @@ var execFile = require('child_process').execFile;
 var servers = [];
 var passed = true;
 
-/* Wrap critical Flow exception into default Error json format */
+/**
+  * Wrap critical Flow exception into default Error json format
+  */
 function fatalError(stderr) {
   return {
     errors: [{
@@ -41,6 +43,13 @@ function executeFlow(PATH, flowArgs, callback) {
     servers.push(path.dirname(PATH));
   }
   execFile(flowBin, args, function (err, stdout, stderr) {
+    if (stderr && /server launched/.test(stderr)) {
+      /**
+       * When flow starts a server it gives us an stderr
+       * saying the server is starting
+       */
+      stderr = null;
+    }
     var parsed = !stderr ? JSON.parse(stdout) : fatalError(stderr);
     var result = {};
     result.errors = parsed.errors.filter(function (error) {
