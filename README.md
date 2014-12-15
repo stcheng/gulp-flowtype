@@ -57,7 +57,7 @@ Default: `true`
 >Notify your command prompt of a Typecheck error with a beep
 
 ## Release History
- * 2014-12-13    v0.4.1    Performance improvements
+ * 2014-12-15    v0.4.1    Performance improvements & better error handling
  * 2014-11-26    v0.4.0    Tweak success message, check file has `/* @flow */` before running flow and added options
  * 2014-11-23    v0.3.1    Changes to previous formatting fix
  * 2014-11-23    v0.3.0    Fix formatting issues
