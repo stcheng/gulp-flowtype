@@ -36,7 +36,9 @@ describe('gulp-flow', function () {
 
     var srcFile = getFixture('hello.js');
 
-    var stream = flow();
+    var stream = flow({
+      beep: false
+    });
 
     stream.on('error', function (err) {
       should.exist(err);
@@ -68,7 +70,9 @@ describe('gulp-flow', function () {
       contents: fs.createReadStream('test/fixtures/hello.js')
     });
 
-    var stream = flow();
+    var stream = flow({
+      beep: false
+    });
 
     stream.on('error', function (err) {
       should.exist(err);
@@ -86,11 +90,14 @@ describe('gulp-flow', function () {
   });
 
   it('should able to check with declarations', function (done) {
-    assertFile(getFixture('declaration.js'), {}, function () {
+    assertFile(getFixture('declaration.js'), {
+      beep: false
+    }, function () {
       should.equal(moduleError, true);
       moduleError = false;
       assertFile(getFixture('declaration.js'), {
-        declarations: './test/fixtures/interfaces'
+        declarations: './test/fixtures/interfaces',
+        beep: false
       }, function () {
         should.equal(moduleError, false);
         done();
@@ -99,11 +106,14 @@ describe('gulp-flow', function () {
   });
 
   it('should able to detect broken declarations', function (done) {
-    assertFile(getFixture('declaration.js'), {}, function () {
+    assertFile(getFixture('declaration.js'), {
+      beep: false
+    }, function () {
       should.equal(moduleError, true);
       moduleError = false;
       assertFile(getFixture('declaration.js'), {
-        declarations: './test/fixtures/broken-interfaces'
+        declarations: './test/fixtures/broken-interfaces',
+        beep: false
       }, function () {
         should.equal(moduleError, false);
         done();
@@ -113,7 +123,8 @@ describe('gulp-flow', function () {
 
   it('should kill flow after running', function (done) {
     assertFile(getFixture('declaration.js'), {
-      killFlow: true
+      killFlow: true,
+      beep: false
     }, function () {
       execFile(flowBin, ['status', '--no-auto-start'], function(err, stdout, stderr) {
         should.equal(/no flow server running/.test(stderr), true);
