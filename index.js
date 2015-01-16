@@ -31,7 +31,9 @@ function fatalError(stderr) {
   };
 }
 
-function executeFlow(PATH, flowArgs, callback) {
+function executeFlow(PATH, flowArgs, opts, callback) {
+  /*jshint validthis:true */
+  var self = this;
   var command = flowArgs.length ? 'check' : 'status';
   var args = [
     command,
@@ -85,6 +87,9 @@ function executeFlow(PATH, flowArgs, callback) {
     if (result.errors.length) {
       passed = false;
       reporter(flowToJshint(result));
+      if (opts.abort) {
+        self.emit('error', new gutil.PluginError('gulp-flow', 'Flow failed'));
+      }
     }
     callback();
   });
@@ -125,7 +130,9 @@ module.exports = function (options) {
       if (hasFlow) {
         var configPath = path.join(process.cwd(), '.flowconfig');
         if (fs.existsSync(configPath)) {
-          executeFlow(file.path, args, callback);
+          executeFlow.call(this, file.path, args, {
+            abort: !!opts.abort
+          }, callback);
         } else {
           console.log(logSymbols.warning + ' Missing .flowconfig in the current working directory.');
         }
