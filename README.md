@@ -22,7 +22,8 @@ gulp.task('typecheck', function() {
         weak: false,
         declarations: './declarations',
         killFlow: false,
-        beep: true
+        beep: true,
+        abort: false
     }))
     .pipe(react({ stripTypes: true })) // Strip Flow type annotations before compiling
     .pipe(gulp.dest('./out'));
@@ -55,6 +56,11 @@ Default: `false`
 Type: `Boolean`
 Default: `true`
 >Notify your command prompt of a Typecheck error with a beep
+
+##### options.abort
+Type: `Boolean`
+Default: `false`
+>Abort the gulp task after the first Typecheck error
 
 ## Release History
  * 2014-12-15    v0.4.1    Performance improvements & better error handling
