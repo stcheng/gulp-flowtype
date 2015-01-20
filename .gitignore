@@ -4,3 +4,4 @@ temp/
 coverage
 .idea
 npm-debug.log
+lib

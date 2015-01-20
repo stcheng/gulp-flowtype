@@ -1,6 +1,7 @@
 /* @flow weak */
 'use strict';
 var fs = require('fs');
+require('6to5/polyfill');
 var path = require('path');
 var gutil = require('gulp-util');
 var through = require('through2');
@@ -15,8 +16,8 @@ var servers = [];
 var passed = true;
 
 /**
-  * Wrap critical Flow exception into default Error json format
-  */
+ * Wrap critical Flow exception into default Error json format
+ */
 function fatalError(stderr) {
   return {
     errors: [{
@@ -31,19 +32,33 @@ function fatalError(stderr) {
   };
 }
 
-function executeFlow(PATH, flowArgs, opts, callback) {
-  /*jshint validthis:true */
-  var self = this;
-  var command = flowArgs.length ? 'check' : 'status';
+function optsToArgs(opts) {
+  var args = [];
+
+  if (opts.all) {
+    args.push('--all');
+  }
+  if (opts.weak) {
+    args.push('--weak');
+  }
+  if (opts.declarations) {
+    args.push('--lib', opts.declarations);
+  }
+
+  return args;
+}
+
+function executeFlow(_path, opts, callback, reject) {
+  var flowArgs = optsToArgs(opts);
+  var command = flowArgs.length ? (() => {
+    servers.push(path.dirname(_path));
+    return 'check';
+  })() : 'status';
   var args = [
     command,
-    '/' + path.relative('/', PATH),
+    '/' + path.relative('/', _path),
     '--json'
   ].concat(flowArgs);
-
-  if (command === 'check') {
-    servers.push(path.dirname(PATH));
-  }
 
   execFile(flowBin, args, function (err, stdout, stderr) {
     if (stderr && /server launched/.test(stderr)) {
@@ -57,7 +72,7 @@ function executeFlow(PATH, flowArgs, opts, callback) {
     var result = {};
     result.errors = parsed.errors.filter(function (error) {
       error.message = error.message.filter(function (message, index) {
-        var isCurrentFile = message.path === PATH;
+        var isCurrentFile = message.path === _path;
         var result = false;
         /**
          * If FlowType traces an issue to a method inside a file that is not
@@ -71,12 +86,12 @@ function executeFlow(PATH, flowArgs, opts, callback) {
 
         var previous = error.message[index - 1];
         if (previous && lineEnding.test(previous.descr)) {
-          result = previous.path === PATH;
+          result = previous.path === _path;
         }
 
         var nextMessage = error.message[index + 1];
         if (nextMessage && lineEnding.test(message.descr)) {
-          result = nextMessage.path === PATH;
+          result = nextMessage.path === _path;
         }
 
         var generalError = (/(Fatal)/.test(message.descr));
@@ -87,11 +102,11 @@ function executeFlow(PATH, flowArgs, opts, callback) {
     if (result.errors.length) {
       passed = false;
       reporter(flowToJshint(result));
-      if (opts.abort) {
-        self.emit('error', new gutil.PluginError('gulp-flow', 'Flow failed'));
+      if (args.abort) {
+        return reject('Flow failed');
       }
     }
-    callback();
+    return callback();
   });
 }
 
@@ -99,45 +114,30 @@ module.exports = function (options) {
   var opts = options || {};
   opts.beep = typeof opts.beep !== 'undefined' ? opts.beep : true;
 
-  var args = [];
-  if (opts.all) {
-    args.push('--all');
-  }
-  if (opts.weak) {
-    args.push('--weak');
-  }
-  if (opts.declarations) {
-    args.push('--lib');
-    args.push(opts.declarations);
-  }
-
   function Flow(file, enc, callback) {
     if (file.isNull()) {
       this.push(file);
       return callback();
-    }
-    else if (file.isStream()) {
+    } else if (file.isStream()) {
       this.emit('error',
         new gutil.PluginError('gulp-flow', 'Stream content is not supported'));
       return callback();
-    }
-    else if (file.isBuffer()) {
-      var hasFlow = opts.all;
-      if (!hasFlow) {
-        var contents = fs.readFileSync(file.path).toString();
-        hasFlow = /\/(\*+) *@flow *(\*+)\//ig.test(contents);
-      }
-      if (hasFlow) {
-        var configPath = path.join(process.cwd(), '.flowconfig');
-        if (fs.existsSync(configPath)) {
-          executeFlow.call(this, file.path, args, {
-            abort: !!opts.abort
-          }, callback);
+    } else if (file.isBuffer()) {
+      var hasPragma = opts.all || /\/(\*+) *@flow *(\*+)\//ig
+        .test(fs.readFileSync(file.path).toString());
+      if (hasPragma) {
+        var flowconfig = path.join(process.cwd(), '.flowconfig');
+        if (fs.existsSync(flowconfig)) {
+          executeFlow(file.path, opts, callback, err => {
+            this.emit('error', new gutil.PluginError('gulp-flow', err));
+            return callback();
+          });
         } else {
           console.log(logSymbols.warning + ' Missing .flowconfig in the current working directory.');
+          this.push(file);
+          return callback();
         }
-      }
-      else {
+      } else {
         this.push(file);
         return callback();
       }
@@ -146,26 +146,33 @@ module.exports = function (options) {
   }
 
   return through.obj(Flow, function () {
+    var end = () => {
+      this.emit('end');
+    };
+
     if (passed) {
       console.log(logSymbols.success + ' Flow has found 0 errors');
-    }
-    else if (opts.beep){
+    } else if (opts.beep) {
       gutil.beep();
     }
 
-    if(opts.killFlow) {
-      if (!servers.length) {
-        this.emit('end');
+    if (opts.killFlow) {
+      if (servers.length) {
+        servers.forEach(function (path, index) {
+          execFile(flowBin, ['stop'], {
+            cwd: path
+          }, function () {
+            if (!servers[index + 1]) {
+              end();
+            }
+          });
+        });
       }
-      servers.forEach(function(path, index) {
-        execFile(flowBin, ['stop'], { cwd: path }, function() {
-          if (!servers[index + 1]) {
-            this.emit('end');
-          }
-        }.bind(this));
-      }, this);
+      else {
+        end();
+      }
     } else {
-      this.emit('end');
+      end();
     }
   });
 };
