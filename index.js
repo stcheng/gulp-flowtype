@@ -51,6 +51,7 @@ function optsToArgs(opts) {
 function executeFlow(_path, opts, callback, reject) {
   var flowArgs = optsToArgs(opts);
   var command = flowArgs.length ? (() => {
+    // Store the server so we can shut it down later
     servers.push(path.dirname(_path));
     return 'check';
   })() : 'status';
@@ -110,9 +111,18 @@ function executeFlow(_path, opts, callback, reject) {
   });
 }
 
-module.exports = function (options) {
-  var opts = options || {};
-  opts.beep = typeof opts.beep !== 'undefined' ? opts.beep : true;
+function checkFlowConfigExist() {
+  var config = path.join(process.cwd(), '.flowconfig');
+  return fs.existsSync(config);
+}
+
+function hasJsxPragma(contents) {
+  return /\/(\*+) *@flow *(\*+)\//ig
+    .test(contents);
+}
+
+module.exports = function (options={}) {
+  options.beep = typeof options.beep !== 'undefined' ? options.beep : true;
 
   function Flow(file, enc, callback) {
     if (file.isNull()) {
@@ -123,12 +133,12 @@ module.exports = function (options) {
         new gutil.PluginError('gulp-flow', 'Stream content is not supported'));
       return callback();
     } else if (file.isBuffer()) {
-      var hasPragma = opts.all || /\/(\*+) *@flow *(\*+)\//ig
-        .test(fs.readFileSync(file.path).toString());
-      if (hasPragma) {
-        var flowconfig = path.join(process.cwd(), '.flowconfig');
-        if (fs.existsSync(flowconfig)) {
-          executeFlow(file.path, opts, callback, err => {
+      var hasPragma = hasJsxPragma(fs.readFileSync(file.path, {
+        encoding: 'utf8'
+      }));
+      if (options.all || hasPragma) {
+        if (checkFlowConfigExist()) {
+          executeFlow(file.path, options, callback, err => {
             this.emit('error', new gutil.PluginError('gulp-flow', err));
             return callback();
           });
@@ -152,11 +162,11 @@ module.exports = function (options) {
 
     if (passed) {
       console.log(logSymbols.success + ' Flow has found 0 errors');
-    } else if (opts.beep) {
+    } else if (options.beep) {
       gutil.beep();
     }
 
-    if (opts.killFlow) {
+    if (options.killFlow) {
       if (servers.length) {
         servers.forEach(function (path, index) {
           execFile(flowBin, ['stop'], {
