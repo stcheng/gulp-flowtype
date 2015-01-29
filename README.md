@@ -63,6 +63,7 @@ Default: `false`
 >Abort the gulp task after the first Typecheck error
 
 ## Release History
+ * 2015-01-30    v0.4.2    Add beep & abort options
  * 2014-12-15    v0.4.1    Performance improvements & better error handling
  * 2014-11-26    v0.4.0    Tweak success message, check file has `/* @flow */` before running flow and added options
  * 2014-11-23    v0.3.1    Changes to previous formatting fix
