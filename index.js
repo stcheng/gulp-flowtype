@@ -133,9 +133,7 @@ module.exports = function (options={}) {
         new gutil.PluginError('gulp-flow', 'Stream content is not supported'));
       return callback();
     } else if (file.isBuffer()) {
-      var hasPragma = hasJsxPragma(fs.readFileSync(file.path, {
-        encoding: 'utf8'
-      }));
+      var hasPragma = hasJsxPragma(fs.readFileSync(file.path));
       if (options.all || hasPragma) {
         if (checkFlowConfigExist()) {
           executeFlow(file.path, options, callback, err => {
