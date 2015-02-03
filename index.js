@@ -129,7 +129,9 @@ function checkFlowConfigExist() {
   var deferred = Q.defer();
   var config = path.join(process.cwd(), '.flowconfig');
   fs.exists(config, function(exists) {
-    if (exists) deferred.resolve();
+    if (exists) {
+      deferred.resolve();
+    }
     else {
       deferred.reject('Missing .flowconfig in the current working directory.');
     }
