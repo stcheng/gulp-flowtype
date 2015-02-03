@@ -1,5 +1,6 @@
 /* @flow weak */
 'use strict';
+var Q = require('q');
 var fs = require('fs');
 require('6to5/polyfill');
 var path = require('path');
@@ -12,6 +13,10 @@ var reporter = require(stylish).reporter;
 var flowToJshint = require('flow-to-jshint');
 var execFile = require('child_process').execFile;
 
+/**
+ * Flow check initialises a server per folder when run,
+ * we can store these paths and kill them later if need be.
+ */
 var servers = [];
 var passed = true;
 
@@ -48,18 +53,19 @@ function optsToArgs(opts) {
   return args;
 }
 
-function executeFlow(_path, opts, callback, reject) {
-  var flowArgs = optsToArgs(opts);
-  var command = flowArgs.length ? (() => {
-    // Store the server so we can shut it down later
+function executeFlow(_path, opts) {
+  var deferred = Q.defer();
+
+  var command = optsToArgs(opts).length ? (() => {
     servers.push(path.dirname(_path));
     return 'check';
   })() : 'status';
+
   var args = [
     command,
     '/' + path.relative('/', _path),
     '--json'
-  ].concat(flowArgs);
+  ].concat(optsToArgs(opts));
 
   execFile(flowBin, args, function (err, stdout, stderr) {
     if (stderr && /server launched/.test(stderr)) {
@@ -100,20 +106,35 @@ function executeFlow(_path, opts, callback, reject) {
       });
       return error.message.length > 0;
     });
+
     if (result.errors.length) {
       passed = false;
       reporter(flowToJshint(result));
       if (args.abort) {
-        return reject('Flow failed');
+        deferred.reject(new gutil.PluginError('gulp-flow', 'Flow failed'));
+      }
+      else {
+        deferred.resolve();
       }
     }
-    return callback();
+    else {
+      deferred.resolve();
+    }
+
   });
+  return deferred.promise;
 }
 
 function checkFlowConfigExist() {
+  var deferred = Q.defer();
   var config = path.join(process.cwd(), '.flowconfig');
-  return fs.existsSync(config);
+  fs.exists(config, function(exists) {
+    if (exists) deferred.resolve();
+    else {
+      deferred.reject('Missing .flowconfig in the current working directory.');
+    }
+  });
+  return deferred.promise;
 }
 
 function hasJsxPragma(contents) {
@@ -121,36 +142,54 @@ function hasJsxPragma(contents) {
     .test(contents);
 }
 
+function isFileSuitable(file) {
+  var deferred = Q.defer();
+  if (file.isNull()) {
+    deferred.reject();
+  }
+  else if (file.isStream()) {
+    deferred.reject(new gutil.PluginError('gulp-flow', 'Stream content is not supported'));
+  }
+  else if (file.isBuffer()) {
+    deferred.resolve();
+  }
+  else {
+    deferred.reject();
+  }
+  return deferred.promise;
+}
+
 module.exports = function (options={}) {
   options.beep = typeof options.beep !== 'undefined' ? options.beep : true;
 
   function Flow(file, enc, callback) {
-    if (file.isNull()) {
+
+    var _continue = () => {
       this.push(file);
-      return callback();
-    } else if (file.isStream()) {
-      this.emit('error',
-        new gutil.PluginError('gulp-flow', 'Stream content is not supported'));
-      return callback();
-    } else if (file.isBuffer()) {
-      var hasPragma = hasJsxPragma(fs.readFileSync(file.path));
+      callback();
+    };
+
+    isFileSuitable(file).then(() => {
+      var hasPragma = hasJsxPragma(file.contents.toString());
       if (options.all || hasPragma) {
-        if (checkFlowConfigExist()) {
-          executeFlow(file.path, options, callback, err => {
-            this.emit('error', new gutil.PluginError('gulp-flow', err));
-            return callback();
+        checkFlowConfigExist().then(() => {
+          executeFlow(file.path, options).then(_continue, err => {
+            this.emit('error', err);
+            callback();
           });
-        } else {
-          console.log(logSymbols.warning + ' Missing .flowconfig in the current working directory.');
-          this.push(file);
-          return callback();
-        }
+        }, msg => {
+          console.log(logSymbols.warning + msg);
+          _continue();
+        });
       } else {
-        this.push(file);
-        return callback();
+        _continue();
       }
-      this.push(file);
-    }
+    }, err => {
+      if (err) {
+        this.emit('error', err);
+      }
+      callback();
+    });
   }
 
   return through.obj(Flow, function () {

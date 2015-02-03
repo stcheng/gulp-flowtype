@@ -26,6 +26,7 @@
     "jshint": "^2.5.10",
     "jshint-stylish": "~1.0.0",
     "log-symbols": "^1.0.1",
+    "q": "^1.1.2",
     "through2": "~0.6.3"
   },
   "devDependencies": {
