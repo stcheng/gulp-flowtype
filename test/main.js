@@ -126,7 +126,9 @@ describe('gulp-flow', function () {
       killFlow: true,
       beep: false
     }, function () {
-      execFile(flowBin, ['status', '--no-auto-start'], function(err, stdout, stderr) {
+      execFile(flowBin, ['status', '--no-auto-start'], {
+        cwd: 'test'
+      }, function(err, stdout, stderr) {
         should.equal(/no flow server running/.test(stderr), true);
         done();
       });

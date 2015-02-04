@@ -161,6 +161,17 @@ function isFileSuitable(file) {
   return deferred.promise;
 }
 
+function killServers() {
+  var defers = servers.map(function(_path) {
+    var deferred = Q.defer();
+    execFile(flowBin, ['stop'], {
+      cwd: _path
+    }, deferred.resolve);
+    return deferred;
+  });
+  return Q.all(defers);
+}
+
 module.exports = function (options={}) {
   options.beep = typeof options.beep !== 'undefined' ? options.beep : true;
 
@@ -207,15 +218,7 @@ module.exports = function (options={}) {
 
     if (options.killFlow) {
       if (servers.length) {
-        servers.forEach(function (path, index) {
-          execFile(flowBin, ['stop'], {
-            cwd: path
-          }, function () {
-            if (!servers[index + 1]) {
-              end();
-            }
-          });
-        });
+        killServers().done(end);
       }
       else {
         end();
