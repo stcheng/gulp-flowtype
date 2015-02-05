@@ -140,7 +140,7 @@ function checkFlowConfigExist() {
 }
 
 function hasJsxPragma(contents) {
-  return /\/(\*+) *@flow *(\*+)\//ig
+  return /@flow\b/ig
     .test(contents);
 }
 

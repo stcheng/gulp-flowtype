@@ -135,6 +135,48 @@ describe('gulp-flow', function () {
     });
   });
 
+  it('should recognize declaration inline', function (done) {
+    assertFile(getFixture('flow-declaration/inline.js'), {
+      beep: false
+    }, function () {
+      should.equal(moduleError, true);
+      moduleError = false;
+      assertFile(getFixture('flow-declaration/inline.js'), {
+        beep: false
+      }, function () {
+        should.equal(moduleError, false);
+        done();
+      });
+    });
+  });
+  it('should recognize declaration multiline', function (done) {
+    assertFile(getFixture('flow-declaration/multiline.js'), {
+      beep: false
+    }, function () {
+      should.equal(moduleError, true);
+      moduleError = false;
+      assertFile(getFixture('flow-declaration/multiline.js'), {
+        beep: false
+      }, function () {
+        should.equal(moduleError, false);
+        done();
+      });
+    });
+  });
+  it('should recognize declaration as a word', function (done) {
+    assertFile(getFixture('flow-declaration/justFlow.js'), {
+      beep: false
+    }, function () {
+      should.equal(moduleError, true);
+      moduleError = false;
+      assertFile(getFixture('flow-declaration/justFlow.js'), {
+        beep: false
+      }, function () {
+        should.equal(moduleError, false);
+        done();
+      });
+    });
+  });
   function getFixture(name) {
     var _path = '/' + path.relative('/', 'test/fixtures/' + name);
     return new gutil.File({
