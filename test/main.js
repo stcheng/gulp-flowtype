@@ -136,12 +136,12 @@ describe('gulp-flow', function () {
   });
 
   it('should recognize declaration inline', function (done) {
-    assertFile(getFixture('flow-declaration/inline.js'), {
+    assertFile(getFixture('flow-declarations/inline.js'), {
       beep: false
     }, function () {
       should.equal(moduleError, true);
       moduleError = false;
-      assertFile(getFixture('flow-declaration/inline.js'), {
+      assertFile(getFixture('flow-declarations/inline.js'), {
         beep: false
       }, function () {
         should.equal(moduleError, false);
@@ -150,12 +150,12 @@ describe('gulp-flow', function () {
     });
   });
   it('should recognize declaration multiline', function (done) {
-    assertFile(getFixture('flow-declaration/multiline.js'), {
+    assertFile(getFixture('flow-declarations/multiline.js'), {
       beep: false
     }, function () {
       should.equal(moduleError, true);
       moduleError = false;
-      assertFile(getFixture('flow-declaration/multiline.js'), {
+      assertFile(getFixture('flow-declarations/multiline.js'), {
         beep: false
       }, function () {
         should.equal(moduleError, false);
@@ -164,12 +164,12 @@ describe('gulp-flow', function () {
     });
   });
   it('should recognize declaration as a word', function (done) {
-    assertFile(getFixture('flow-declaration/justFlow.js'), {
+    assertFile(getFixture('flow-declarations/justFlow.js'), {
       beep: false
     }, function () {
       should.equal(moduleError, true);
       moduleError = false;
-      assertFile(getFixture('flow-declaration/justFlow.js'), {
+      assertFile(getFixture('flow-declarations/justFlow.js'), {
         beep: false
       }, function () {
         should.equal(moduleError, false);
