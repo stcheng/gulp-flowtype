@@ -62,6 +62,30 @@ Type: `Boolean`
 Default: `false`
 >Abort the gulp task after the first Typecheck error
 
+
+### Overriding Flow bin location
+By default we use [flow bin]() to locate flow for you. If you need to override this (ie you're running windows), then set FLOW_BIN to point at your location
+ie:
+```js
+var react = require('gulp-react');
+var flow = require('gulp-flowtype');
+
+gulp.task('typecheck', function() {
+  process.env.FLOW_BIN = './flow.exe';
+  return gulp.src('./*.js')
+    .pipe(flow({
+        all: false,
+        weak: false,
+        declarations: './declarations',
+        killFlow: false,
+        beep: true,
+        abort: false
+    }))
+    .pipe(react({ stripTypes: true })) // Strip Flow type annotations before compiling
+    .pipe(gulp.dest('./out'));
+});
+```
+
 ## Release History
  * 2015-01-30    v0.4.2    Add beep & abort options
  * 2014-12-15    v0.4.1    Performance improvements & better error handling
