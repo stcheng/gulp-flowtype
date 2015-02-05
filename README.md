@@ -9,6 +9,16 @@
 $ npm install --save-dev gulp-flowtype
 ```
 
+### Running Windows?
+
+Flow hasn't provided an official binary as of yet, you can follow the issue here [#6](https://github.com/facebook/flow/issues/6).
+
+If you do manage to compile flow and get it running. You can set the path to your own executable using an environment variable.
+
+``` sh
+$ set FLOW_BIN=/path/to/flow
+```
+
 ### Usage
 
 ```js
@@ -61,30 +71,6 @@ Default: `true`
 Type: `Boolean`
 Default: `false`
 >Abort the gulp task after the first Typecheck error
-
-
-### Overriding Flow bin location
-By default we use [flow bin]() to locate flow for you. If you need to override this (ie you're running windows), then set FLOW_BIN to point at your location
-ie:
-```js
-var react = require('gulp-react');
-var flow = require('gulp-flowtype');
-
-gulp.task('typecheck', function() {
-  process.env.FLOW_BIN = './flow.exe';
-  return gulp.src('./*.js')
-    .pipe(flow({
-        all: false,
-        weak: false,
-        declarations: './declarations',
-        killFlow: false,
-        beep: true,
-        abort: false
-    }))
-    .pipe(react({ stripTypes: true })) // Strip Flow type annotations before compiling
-    .pipe(gulp.dest('./out'));
-});
-```
 
 ## Release History
  * 2015-01-30    v0.4.2    Add beep & abort options
