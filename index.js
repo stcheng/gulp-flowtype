@@ -67,7 +67,7 @@ function executeFlow(_path, opts) {
     '--json'
   ].concat(optsToArgs(opts));
 
-  execFile(flowBin, args, function (err, stdout, stderr) {
+  execFile(opts.flowBin || flowBin, args, function (err, stdout, stderr) {
     if (stderr && /server launched/.test(stderr)) {
       /**
        * When flow starts a server it gives us an stderr
