@@ -100,8 +100,8 @@ function executeFlow(_path, opts) {
         if (nextMessage && lineEnding.test(message.descr)) {
           result = nextMessage.path === _path;
         }
-
-        var generalError = (/(Fatal)/.test(message.descr));
+        var generalErrorRegEx = opts.generalErrorRegEx || /(Fatal)/;
+        var generalError = (generalErrorRegEx.test(message.descr));
         return isCurrentFile || result || generalError;
       });
       return error.message.length > 0;
