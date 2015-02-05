@@ -62,6 +62,17 @@ Type: `Boolean`
 Default: `false`
 >Abort the gulp task after the first Typecheck error
 
+
+##### options.flowBin
+Type: `String`
+Default: `empty`
+>Override the bin to run flow. Useful if you have a local copy, or more likely, you are on windows and facebook (& flow-bin) dont publish that *sigh*
+
+##### options.generalErrorRegEx
+Type: `String`
+Default: `/(Fatal)/`
+>Override regex used for general errors
+
 ## Release History
  * 2015-01-30    v0.4.2    Add beep & abort options
  * 2014-12-15    v0.4.1    Performance improvements & better error handling
