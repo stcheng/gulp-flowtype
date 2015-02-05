@@ -67,7 +67,7 @@ function executeFlow(_path, opts) {
     '--json'
   ].concat(optsToArgs(opts));
 
-  execFile(flowBin, args, function (err, stdout, stderr) {
+  execFile(getFlowBin(), args, function (err, stdout, stderr) {
     if (stderr && /server launched/.test(stderr)) {
       /**
        * When flow starts a server it gives us an stderr
@@ -100,8 +100,8 @@ function executeFlow(_path, opts) {
         if (nextMessage && lineEnding.test(message.descr)) {
           result = nextMessage.path === _path;
         }
-
-        var generalError = (/(Fatal)/.test(message.descr));
+        var generalErrorRegEx = opts.generalErrorRegEx || /(Fatal)/;
+        var generalError = (generalErrorRegEx.test(message.descr));
         return isCurrentFile || result || generalError;
       });
       return error.message.length > 0;
@@ -140,7 +140,7 @@ function checkFlowConfigExist() {
 }
 
 function hasJsxPragma(contents) {
-  return /\/(\*+) *@flow *(\*+)\//ig
+  return /@flow\b/ig
     .test(contents);
 }
 
@@ -164,12 +164,16 @@ function isFileSuitable(file) {
 function killServers() {
   var defers = servers.map(function(_path) {
     var deferred = Q.defer();
-    execFile(flowBin, ['stop'], {
+    execFile(getFlowBin(), ['stop'], {
       cwd: _path
     }, deferred.resolve);
     return deferred;
   });
   return Q.all(defers);
+}
+
+function getFlowBin() {
+  process.env.FLOW_BIN || flowBin;
 }
 
 module.exports = function (options={}) {
