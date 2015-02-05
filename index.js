@@ -172,7 +172,7 @@ function killServers() {
   return Q.all(defers);
 }
 
-function getFlowBin()) {
+function getFlowBin() {
   process.env.FLOW_BIN || flowBin;
 }
 
