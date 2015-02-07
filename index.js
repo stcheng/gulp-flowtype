@@ -195,7 +195,7 @@ module.exports = function (options={}) {
             callback();
           });
         }, msg => {
-          console.log(logSymbols.warning + msg);
+          console.log(logSymbols.warning + ' ' + msg);
           _continue();
         });
       } else {
