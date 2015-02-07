@@ -1,6 +1,6 @@
 {
   "name": "gulp-flowtype",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Run Facebook's Flow in your gulp pipeline",
   "keywords": [
     "gulp",
@@ -27,6 +27,7 @@
     "jshint-stylish": "~1.0.0",
     "log-symbols": "^1.0.1",
     "q": "^1.1.2",
+    "6to5": "2.13.3",
     "through2": "~0.6.3"
   },
   "devDependencies": {
@@ -34,8 +35,7 @@
     "istanbul": "~0.3.2",
     "mocha": "~2.1.0",
     "mocha-lcov-reporter": "~0.0.1",
-    "should": "~4.4.2",
-    "6to5": "2.13.3"
+    "should": "~4.4.2"
   },
   "engines": {
     "node": ">=0.8.0",

@@ -73,12 +73,13 @@ Default: `false`
 >Abort the gulp task after the first Typecheck error
 
 ## Release History
- * 2015-02-06    v0.4.2    Add beep, abort on error and option to override flow executable
- * 2014-12-15    v0.4.1    Performance improvements & better error handling
- * 2014-11-26    v0.4.0    Tweak success message, check file has `/* @flow */` before running flow and added options
- * 2014-11-23    v0.3.1    Changes to previous formatting fix
- * 2014-11-23    v0.3.0    Fix formatting issues
- * 2014-11-21    v0.2.0    General improvements
+ * 2015-02-07    v0.4.3    [Fix] Move dependency from devDependencies to dependencies
+ * 2015-02-06    v0.4.2    [Improvement] Add beep, abort on error and option to override flow executable (broken)
+ * 2014-12-15    v0.4.1    [Improvement] Performance improvements & better error handling
+ * 2014-11-26    v0.4.0    [Improvement] Tweak success message, check file has `/* @flow */` before running flow and added options
+ * 2014-11-23    v0.3.1    [Fix] Changes to previous formatting fix
+ * 2014-11-23    v0.3.0    [Fix] Repair formatting issues
+ * 2014-11-21    v0.2.0    [Improvement] General improvements
  * 2014-11-19    v0.1.0    Initial release
 
 ## Contributing
