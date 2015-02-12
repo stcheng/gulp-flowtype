@@ -212,6 +212,7 @@ module.exports = function (options={}) {
   return through.obj(Flow, function () {
     var end = () => {
       this.emit('end');
+      passed = true;
     };
 
     if (passed) {
