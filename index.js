@@ -30,7 +30,7 @@ function fatalError(stderr) {
         path: '',
         code: 0,
         line: 0,
-        col: 0,
+        start: 0,
         descr: stderr
       }]
     }]
@@ -79,7 +79,9 @@ function executeFlow(_path, opts) {
        */
       stderr = null;
     }
-    var parsed = !stderr ? JSON.parse(stdout) : fatalError(stderr);
+
+    var error = err ? err.message : stderr;
+    var parsed = !error ? JSON.parse(stdout) : fatalError(error);
     var result = {};
     result.errors = parsed.errors.filter(function (error) {
       error.message = error.message.filter(function (message, index) {
