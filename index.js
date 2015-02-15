@@ -67,9 +67,10 @@ function executeFlow(_path, opts) {
 
   var args = [
     command,
+    ...optsToArgs(opts),
     '/' + path.relative('/', _path),
     '--json'
-  ].concat(optsToArgs(opts));
+  ];
 
   execFile(getFlowBin(), args, function (err, stdout, stderr) {
     if (stderr && /server launched/.test(stderr)) {
@@ -80,8 +81,7 @@ function executeFlow(_path, opts) {
       stderr = null;
     }
 
-    var error = err ? err.message : stderr;
-    var parsed = !error ? JSON.parse(stdout) : fatalError(error);
+    var parsed = !stderr ? JSON.parse(stdout) : fatalError(stderr);
     var result = {};
     result.errors = parsed.errors.filter(function (error) {
       error.message = error.message.filter(function (message, index) {
