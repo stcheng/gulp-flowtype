@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "event-stream": "~3.2.0",
-    "flow-bin": "~0.2.0",
+    "flow-bin": "~0.3.0",
     "flow-to-jshint": "~0.2.0",
     "gulp-util": "~3.0.1",
     "jshint": "^2.5.10",
