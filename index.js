@@ -8,10 +8,9 @@ var gutil = require('gulp-util');
 var through = require('through2');
 var flowBin = require('flow-bin');
 var logSymbols = require('log-symbols');
-var stylish = require('jshint-stylish');
-var reporter = require(stylish).reporter;
+var { execFile } = require('child_process');
 var flowToJshint = require('flow-to-jshint');
-var execFile = require('child_process').execFile;
+var { reporter } = require(require('jshint-stylish'));
 
 /**
  * Flow check initialises a server per folder when run,
