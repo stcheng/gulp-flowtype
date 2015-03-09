@@ -73,6 +73,7 @@ Default: `false`
 >Abort the gulp task after the first Typecheck error
 
 ## Release History
+ * 2015-03-10    v0.4.6    [Improvement] Move flow-bin to peerDependencies
  * 2015-02-24    v0.4.5    [Bump] flow-bin `v0.4.0`
  * 2015-02-15    v0.4.4    [Fix] [#19](https://github.com/charliedowler/gulp-flowtype/issues/19) Reset passed value when finished
  * 2015-02-07    v0.4.3    [Fix] Move dependency from devDependencies to dependencies

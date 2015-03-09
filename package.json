@@ -1,6 +1,6 @@
 {
   "name": "gulp-flowtype",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Run Facebook's Flow in your gulp pipeline",
   "keywords": [
     "gulp",
@@ -14,11 +14,12 @@
   "repository": "charliedowler/gulp-flowtype",
   "scripts": {
     "lint": "./node_modules/.bin/jshint **.js && flow check --lib ./declarations/",
-    "test": "6to5 -d lib index.js; istanbul test _mocha --report html -- test/*.js --reporter spec",
+    "test": "babel -d lib index.js; istanbul test _mocha --report html -- test/*.js --reporter spec",
     "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "prepublish": "6to5 -d lib index.js"
+    "prepublish": "babel -d lib index.js"
   },
   "dependencies": {
+    "babel": "^4.7.4",
     "event-stream": "~3.2.0",
     "flow-to-jshint": "~0.2.0",
     "gulp-util": "~3.0.1",
@@ -26,7 +27,6 @@
     "jshint-stylish": "~1.0.0",
     "log-symbols": "^1.0.1",
     "q": "^1.1.2",
-    "6to5": "~3.6.0",
     "through2": "~0.6.3"
   },
   "devDependencies": {
