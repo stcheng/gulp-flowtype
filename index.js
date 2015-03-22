@@ -56,17 +56,19 @@ function getFlowBin() {
     return process.env.FLOW_BIN || flowBin;
 }
 
-function executeFlow(_path, opts) {
+function executeFlow(_path, options) {
   var deferred = Q.defer();
 
-  var command = optsToArgs(opts).length ? (() => {
+  var opts = optsToArgs(options);
+
+  var command = opts.length ? (() => {
     servers.push(path.dirname(_path));
     return 'check';
   })() : 'status';
 
   var args = [
     command,
-    ...optsToArgs(opts),
+    ...opts,
     '/' + path.relative('/', _path),
     '--json'
   ];
@@ -115,7 +117,7 @@ function executeFlow(_path, opts) {
     if (result.errors.length) {
       passed = false;
       reporter(flowToJshint(result));
-      if (args.abort) {
+      if (options.abort) {
         deferred.reject(new gutil.PluginError('gulp-flow', 'Flow failed'));
       }
       else {
