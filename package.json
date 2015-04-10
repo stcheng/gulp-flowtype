@@ -19,8 +19,8 @@
     "prepublish": "babel -d lib index.js"
   },
   "dependencies": {
-    "babel": "^4.7.4",
-    "event-stream": "~3.2.0",
+    "babel": "^5.0.12",
+    "event-stream": "~3.3.0",
     "flow-to-jshint": "~0.2.0",
     "gulp-util": "~3.0.1",
     "jshint": "^2.5.10",
@@ -33,9 +33,9 @@
   "devDependencies": {
     "coveralls": "~2.11.2",
     "istanbul": "~0.3.2",
-    "mocha": "~2.1.0",
+    "mocha": "~2.2.4",
     "mocha-lcov-reporter": "~0.0.1",
-    "should": "~4.4.2"
+    "should": "~5.2.0"
   },
   "engines": {
     "node": ">=0.8.0",
