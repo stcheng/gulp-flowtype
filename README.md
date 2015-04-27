@@ -72,6 +72,11 @@ Type: `Boolean`
 Default: `false`
 >Abort the gulp task after the first Typecheck error
 
+##### options.reporter
+Type: `function`
+Default: https://github.com/sindresorhus/jshint-stylish
+>Optionally specify a custom reporter.  This needs to conform to the specifications in http://jshint.com/docs/reporters/
+
 ## Release History
  * 2015-04-10    v0.4.6    [Fix] Move flow-bin to peerDependencies + [#25](https://github.com/charliedowler/gulp-flowtype/issues/25) Fix abort option
  * 2015-02-24    v0.4.5    [Bump] flow-bin `v0.4.0`

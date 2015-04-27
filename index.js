@@ -10,7 +10,7 @@ var flowBin = require('flow-bin');
 var logSymbols = require('log-symbols');
 var { execFile } = require('child_process');
 var flowToJshint = require('flow-to-jshint');
-var { reporter } = require(require('jshint-stylish'));
+var stylishReporter = require(require('jshint-stylish')).reporter;
 
 /**
  * Flow check initialises a server per folder when run,
@@ -116,7 +116,14 @@ function executeFlow(_path, options) {
 
     if (result.errors.length) {
       passed = false;
+
+      // Allow a custom reporter to be passed into the options, otherwise default
+      // to jshint-stylish reporter
+      var reporter = typeof options.reporter === 'undefined' ?
+        stylishReporter : options.reporter.reporter;
+
       reporter(flowToJshint(result));
+
       if (options.abort) {
         deferred.reject(new gutil.PluginError('gulp-flow', 'Flow failed'));
       }
