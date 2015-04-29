@@ -74,7 +74,7 @@ Default: `false`
 
 ##### options.reporter
 Type: `function`
-Default: https://github.com/sindresorhus/jshint-stylish
+Default: [sindresorhus/jshint-stylish](https://github.com/sindresorhus/jshint-stylish)
 >Optionally specify a custom reporter.  This needs to conform to the specifications in http://jshint.com/docs/reporters/
 
 ## Release History

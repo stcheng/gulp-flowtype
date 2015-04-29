@@ -117,8 +117,6 @@ function executeFlow(_path, options) {
     if (result.errors.length) {
       passed = false;
 
-      // Allow a custom reporter to be passed into the options, otherwise default
-      // to jshint-stylish reporter
       var reporter = typeof options.reporter === 'undefined' ?
         stylishReporter : options.reporter.reporter;
 
