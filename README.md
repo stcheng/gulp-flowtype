@@ -78,6 +78,7 @@ Default: [sindresorhus/jshint-stylish](https://github.com/sindresorhus/jshint-st
 >Optionally specify a custom reporter.  This needs to conform to the specifications in http://jshint.com/docs/reporters/
 
 ## Release History
+ * 2015-05-05    v0.4.7    [Improvement] Add option for custom reporter
  * 2015-04-10    v0.4.6    [Fix] Move flow-bin to peerDependencies + [#25](https://github.com/charliedowler/gulp-flowtype/issues/25) Fix abort option
  * 2015-02-24    v0.4.5    [Bump] flow-bin `v0.4.0`
  * 2015-02-15    v0.4.4    [Fix] [#19](https://github.com/charliedowler/gulp-flowtype/issues/19) Reset passed value when finished
