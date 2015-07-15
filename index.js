@@ -8,7 +8,7 @@ var gutil = require('gulp-util');
 var through = require('through2');
 var flowBin = require('flow-bin');
 var logSymbols = require('log-symbols');
-var { execFile } = require('child_process');
+var { execFile, spawn } = require('child_process');
 var flowToJshint = require('flow-to-jshint');
 var stylishReporter = require(require('jshint-stylish')).reporter;
 
@@ -73,16 +73,16 @@ function executeFlow(_path, options) {
     '--json'
   ];
 
-  execFile(getFlowBin(), args, function (err, stdout, stderr) {
-    if (stderr && /server launched/.test(stderr)) {
-      /**
-       * When flow starts a server it gives us an stderr
-       * saying the server is starting.
-       */
-      stderr = null;
-    }
+  var stream = spawn(getFlowBin(), args);
 
-    var parsed = !stderr ? JSON.parse(stdout) : fatalError(stderr);
+  stream.stdout.on('data', data => {
+    var parsed;
+    try {
+      parsed = JSON.parse(data.toString());
+    }
+    catch(e) {
+      parsed = fatalError(data.toString());
+    }
     var result = {};
     result.errors = parsed.errors.filter(function (error) {
       error.message = error.message.filter(function (message, index) {
@@ -132,8 +132,8 @@ function executeFlow(_path, options) {
     else {
       deferred.resolve();
     }
-
   });
+
   return deferred.promise;
 }
 
