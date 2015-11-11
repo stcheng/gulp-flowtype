@@ -129,7 +129,7 @@ describe('gulp-flow', function () {
       execFile(flowBin, ['status', '--no-auto-start'], {
         cwd: 'test'
       }, function(err, stdout, stderr) {
-        should.equal(/no flow server running/.test(stderr), true);
+        should.equal(/no Flow server running/.test(stderr), true);
         done();
       });
     });

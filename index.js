@@ -85,33 +85,26 @@ function executeFlow(_path, options) {
     }
     var result = {};
     result.errors = parsed.errors.filter(function (error) {
-      error.message = error.message.filter(function (message, index) {
-        var isCurrentFile = message.path === _path;
-        var result = false;
-        /**
-         * If FlowType traces an issue to a method inside a file that is not
-         * the one being piped through, it adds a new element to the list
-         * of errors with a different file path to the current one. To detect
-         * whether this error is related to the current file we check the
-         * previous and next error to see if it ends with `found`, `in` or
-         * `with`, From this we can tell if the error should be shown or not.
-         */
-        var lineEnding = /(with|found|in)$/;
-
-        var previous = error.message[index - 1];
-        if (previous && lineEnding.test(previous.descr)) {
-          result = previous.path === _path;
+      if (!error.message.some(function (msg) { return msg.path === _path; })) {
+        return false;
+      }
+      var message = [];
+      for (var i = 0; i < error.message.length; i++) {
+        var msg = error.message[i];
+        // A lot of Flow errors have 2-3 messages, where the first one
+        // indicates the place and identifier that cause the problem,
+        // and the 2nd one contains the error message. An optional third
+        // message might contain a place and identifier that the first
+        // one is in conflict with. Here we fold first and second
+        // message into one to make the reporting more concise.
+        if (i > 0 && !msg.path && !msg.line) {
+          error.message[i - 1].descr += '\n' + msg.descr;
+        } else {
+          message.push(msg);
         }
-
-        var nextMessage = error.message[index + 1];
-        if (nextMessage && lineEnding.test(message.descr)) {
-          result = nextMessage.path === _path;
-        }
-
-        var generalError = (/(Fatal)/.test(message.descr));
-        return isCurrentFile || result || generalError;
-      });
-      return error.message.length > 0;
+      }
+      error.message = message;
+      return true;
     });
 
     if (result.errors.length) {
