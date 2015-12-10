@@ -1,16 +1,18 @@
 /* @flow weak */
 'use strict';
+
+
 var Q = require('q');
 var fs = require('fs');
-require('babel/polyfill');
+require('babel-polyfill');
 var path = require('path');
 var gutil = require('gulp-util');
 var through = require('through2');
 var flowBin = require('flow-bin');
 var logSymbols = require('log-symbols');
-var { execFile, spawn } = require('child_process');
+var childProcess = require('child_process');
 var flowToJshint = require('flow-to-jshint');
-var stylishReporter = require(require('jshint-stylish')).reporter;
+var stylishReporter = require('jshint-stylish').reporter;
 
 /**
  * Flow check initialises a server per folder when run,
@@ -61,7 +63,7 @@ function executeFlow(_path, options) {
 
   var opts = optsToArgs(options);
 
-  var command = opts.length ? (() => {
+  var command = opts.length || options.killFlow ? (() => {
     servers.push(path.dirname(_path));
     return 'check';
   })() : 'status';
@@ -73,7 +75,7 @@ function executeFlow(_path, options) {
     '--json'
   ];
 
-  var stream = spawn(getFlowBin(), args);
+  var stream = childProcess.spawn(getFlowBin(), args);
 
   stream.stdout.on('data', data => {
     var parsed;
@@ -85,9 +87,15 @@ function executeFlow(_path, options) {
     }
     var result = {};
     result.errors = parsed.errors.filter(function (error) {
+      let lastFile = '';
       error.message = error.message.filter(function (message, index) {
-        var isCurrentFile = message.path === _path;
+        var isCurrentFile = message.path === _path || !message.path.length && lastFile === _path;
         var result = false;
+
+        if (message.path.length) {
+          lastFile = message.path;
+        }
+
         /**
          * If FlowType traces an issue to a method inside a file that is not
          * the one being piped through, it adds a new element to the list
@@ -176,7 +184,7 @@ function isFileSuitable(file) {
 function killServers() {
   var defers = servers.map(function(_path) {
     var deferred = Q.defer();
-    execFile(getFlowBin(), ['stop'], {
+    childProcess.execFile(getFlowBin(), ['stop'], {
       cwd: _path
     }, deferred.resolve);
     return deferred;
