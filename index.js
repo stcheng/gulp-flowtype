@@ -86,40 +86,13 @@ function executeFlow(_path, options) {
       parsed = fatalError(data.toString());
     }
     var result = {};
+
+    // loop through errors in file
     result.errors = parsed.errors.filter(function (error) {
-      let lastFile = '';
-      error.message = error.message.filter(function (message, index) {
-        var isCurrentFile = message.path === _path || !message.path.length && lastFile === _path;
-        var result = false;
+      let isCurrentFile = error.message[0].path === _path;
+      let generalError = (/(Fatal)/.test(error.message[0].descr));
 
-        if (message.path.length) {
-          lastFile = message.path;
-        }
-
-        /**
-         * If FlowType traces an issue to a method inside a file that is not
-         * the one being piped through, it adds a new element to the list
-         * of errors with a different file path to the current one. To detect
-         * whether this error is related to the current file we check the
-         * previous and next error to see if it ends with `found`, `in` or
-         * `with`, From this we can tell if the error should be shown or not.
-         */
-        var lineEnding = /(with|found|in)$/;
-
-        var previous = error.message[index - 1];
-        if (previous && lineEnding.test(previous.descr)) {
-          result = previous.path === _path;
-        }
-
-        var nextMessage = error.message[index + 1];
-        if (nextMessage && lineEnding.test(message.descr)) {
-          result = nextMessage.path === _path;
-        }
-
-        var generalError = (/(Fatal)/.test(message.descr));
-        return isCurrentFile || result || generalError;
-      });
-      return error.message.length > 0;
+      return isCurrentFile || generalError;
     });
 
     if (result.errors.length) {
