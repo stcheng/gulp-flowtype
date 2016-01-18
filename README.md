@@ -78,6 +78,8 @@ Default: [sindresorhus/jshint-stylish](https://github.com/sindresorhus/jshint-st
 >Optionally specify a custom reporter.  This needs to conform to the specifications in http://jshint.com/docs/reporters/
 
 ## Release History
+ * 2016-01-18    v0.4.9    [Improvement] Update dependencies + fix broken code [#38](https://github.com/charliedowler/gulp-flowtype/pull/38)
+ * 2015-09-13    v0.4.8    [Fix] Downgrade flow
  * 2015-05-05    v0.4.7    [Improvement] Add option for custom reporter
  * 2015-04-10    v0.4.6    [Fix] Move flow-bin to peerDependencies + [#25](https://github.com/charliedowler/gulp-flowtype/issues/25) Fix abort option
  * 2015-02-24    v0.4.5    [Bump] flow-bin `v0.4.0`
