@@ -1,16 +1,18 @@
 /* @flow weak */
 'use strict';
+
+
 var Q = require('q');
 var fs = require('fs');
-require('babel/polyfill');
+require('babel-polyfill');
 var path = require('path');
 var gutil = require('gulp-util');
 var through = require('through2');
 var flowBin = require('flow-bin');
 var logSymbols = require('log-symbols');
-var { execFile, spawn } = require('child_process');
+var childProcess = require('child_process');
 var flowToJshint = require('flow-to-jshint');
-var stylishReporter = require(require('jshint-stylish')).reporter;
+var stylishReporter = require('jshint-stylish').reporter;
 
 /**
  * Flow check initialises a server per folder when run,
@@ -61,7 +63,7 @@ function executeFlow(_path, options) {
 
   var opts = optsToArgs(options);
 
-  var command = opts.length ? (() => {
+  var command = opts.length || options.killFlow ? (() => {
     servers.push(path.dirname(_path));
     return 'check';
   })() : 'status';
@@ -73,7 +75,7 @@ function executeFlow(_path, options) {
     '--json'
   ];
 
-  var stream = spawn(getFlowBin(), args);
+  var stream = childProcess.spawn(getFlowBin(), args);
 
   stream.stdout.on('data', data => {
     var parsed;
@@ -84,34 +86,13 @@ function executeFlow(_path, options) {
       parsed = fatalError(data.toString());
     }
     var result = {};
+
+    // loop through errors in file
     result.errors = parsed.errors.filter(function (error) {
-      error.message = error.message.filter(function (message, index) {
-        var isCurrentFile = message.path === _path;
-        var result = false;
-        /**
-         * If FlowType traces an issue to a method inside a file that is not
-         * the one being piped through, it adds a new element to the list
-         * of errors with a different file path to the current one. To detect
-         * whether this error is related to the current file we check the
-         * previous and next error to see if it ends with `found`, `in` or
-         * `with`, From this we can tell if the error should be shown or not.
-         */
-        var lineEnding = /(with|found|in)$/;
+      let isCurrentFile = error.message[0].path === _path;
+      let generalError = (/(Fatal)/.test(error.message[0].descr));
 
-        var previous = error.message[index - 1];
-        if (previous && lineEnding.test(previous.descr)) {
-          result = previous.path === _path;
-        }
-
-        var nextMessage = error.message[index + 1];
-        if (nextMessage && lineEnding.test(message.descr)) {
-          result = nextMessage.path === _path;
-        }
-
-        var generalError = (/(Fatal)/.test(message.descr));
-        return isCurrentFile || result || generalError;
-      });
-      return error.message.length > 0;
+      return isCurrentFile || generalError;
     });
 
     if (result.errors.length) {
@@ -176,7 +157,7 @@ function isFileSuitable(file) {
 function killServers() {
   var defers = servers.map(function(_path) {
     var deferred = Q.defer();
-    execFile(getFlowBin(), ['stop'], {
+    childProcess.execFile(getFlowBin(), ['stop'], {
       cwd: _path
     }, deferred.resolve);
     return deferred;

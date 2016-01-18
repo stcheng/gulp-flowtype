@@ -1,4 +1,11 @@
 [ignore]
-.*/node_modules/*
 .*/test/*
-[include]
+.*/node_modules/babylon/lib/parser/*
+.*/node_modules/babel-types/lib/*
+.*/node_modules/babel-register/src/node.js
+.*/node_modules/babel-generator/lib/*
+.*/node_modules/babel-core/lib/util.js
+.*/node_modules/babel-core/lib/transformation/*
+.*/node_modules/babel-helper-regex/lib/index.js
+[options]
+suppress_comment= \\(.\\|\n\\)*\\$FlowFixMe

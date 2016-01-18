@@ -89,7 +89,7 @@ describe('gulp-flow', function () {
     stream.end();
   });
 
-  it('should able to check with declarations', function (done) {
+  it('should be able to check with declarations', function (done) {
     assertFile(getFixture('declaration.js'), {
       beep: false
     }, function () {
@@ -129,12 +129,19 @@ describe('gulp-flow', function () {
       execFile(flowBin, ['status', '--no-auto-start'], {
         cwd: 'test'
       }, function(err, stdout, stderr) {
-        should.equal(/no flow server running/.test(stderr), true);
+        should.equal(/no flow server running/.test(stderr.toLowerCase()), true);
         done();
       });
     });
   });
 
+  /**
+   * Get file from fixtures
+   *
+   * @param  {string} name fixture file name
+   *
+   * @return {Vinyl} file object
+   */
   function getFixture(name) {
     var _path = '/' + path.relative('/', 'test/fixtures/' + name);
     return new gutil.File({
@@ -145,6 +152,13 @@ describe('gulp-flow', function () {
     });
   }
 
+  /**
+   * Test file with flow
+   *
+   * @param  {Vinyl}    srcFile     file object
+   * @param  {Object}   flowOptions flow options
+   * @param  {Function} callback    execution callback
+   */
   function assertFile(srcFile, flowOptions, callback) {
     var stream = flow(flowOptions);
     stream.on('error', function (err) {
@@ -165,5 +179,4 @@ describe('gulp-flow', function () {
     stream.write(srcFile);
     stream.end();
   }
-
 });
