@@ -25,7 +25,7 @@
     "babel-polyfill": "^6.3.14",
     "babel-types": "^6.3.14",
     "event-stream": "~3.3.0",
-    "flow-bin": "^0.20.1",
+    "flow-bin": "^0.26.0",
     "flow-to-jshint": "~0.2.0",
     "gulp-util": "~3.0.1",
     "jshint": "^2.8.0",
