@@ -11,8 +11,8 @@ var through = require('through2');
 var flowBin = require('flow-bin');
 var logSymbols = require('log-symbols');
 var childProcess = require('child_process');
-var flowToJshint = require('flow-to-jshint');
-var stylishReporter = require('jshint-stylish').reporter;
+var chalk = require('chalk');
+var reporter = require('flow-reporter');
 
 /**
  * Flow check initialises a server per folder when run,
@@ -77,13 +77,18 @@ function executeFlow(_path, options) {
 
   var stream = childProcess.spawn(getFlowBin(), args);
 
+  var dat = "";
   stream.stdout.on('data', data => {
+    dat += data.toString();
+  });
+
+  stream.stdout.on('end', () =>{
     var parsed;
     try {
-      parsed = JSON.parse(data.toString());
+      parsed = JSON.parse(dat);
     }
     catch(e) {
-      parsed = fatalError(data.toString());
+      parsed = fatalError(dat);
     }
     var result = {};
 
@@ -98,10 +103,9 @@ function executeFlow(_path, options) {
     if (result.errors.length) {
       passed = false;
 
-      var reporter = typeof options.reporter === 'undefined' ?
-        stylishReporter : options.reporter.reporter;
-
-      reporter(flowToJshint(result));
+      var report = typeof options.reporter === 'undefined' ?
+        reporter : options.reporter;
+      report(result.errors);
 
       if (options.abort) {
         deferred.reject(new gutil.PluginError('gulp-flow', 'Flow failed'));
@@ -113,7 +117,7 @@ function executeFlow(_path, options) {
     else {
       deferred.resolve();
     }
-  });
+  })
 
   return deferred.promise;
 }

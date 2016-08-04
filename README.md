@@ -9,16 +9,6 @@
 $ npm install --save-dev gulp-flowtype
 ```
 
-### Running Windows?
-
-Flow hasn't provided an official binary as of yet, you can follow the issue here [#6](https://github.com/facebook/flow/issues/6).
-
-If you do manage to compile flow and get it running. You can set the path to your own executable using an environment variable.
-
-``` sh
-$ set FLOW_BIN=/path/to/flow
-```
-
 ### Usage
 
 ```js
@@ -74,10 +64,11 @@ Default: `false`
 
 ##### options.reporter
 Type: `function`
-Default: [sindresorhus/jshint-stylish](https://github.com/sindresorhus/jshint-stylish)
->Optionally specify a custom reporter.  This needs to conform to the specifications in http://jshint.com/docs/reporters/
+Default: [charliedowler/flow-reporter](https://github.com/charliedowler/flow-reporter)
+>Optionally specify a custom reporter.
 
 ## Release History
+ * 2016-08-04    v1.0.0    [Improvement] Update dependencies + Add support for new flow format
  * 2016-01-18    v0.4.9    [Improvement] Update dependencies + fix broken code [#38](https://github.com/charliedowler/gulp-flowtype/pull/38)
  * 2015-09-13    v0.4.8    [Fix] Downgrade flow
  * 2015-05-05    v0.4.7    [Improvement] Add option for custom reporter
