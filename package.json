@@ -1,6 +1,6 @@
 {
   "name": "gulp-flowtype",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Run Facebook's Flow in your gulp pipeline",
   "keywords": [
     "gulp",
@@ -11,7 +11,7 @@
     "name": "Charlie Dowler",
     "url": "https://github.com/charliedowler"
   },
-  "repository": "charliedowler/gulp-flowtype",
+  "repository": "aikar/gulp-flowtype",
   "scripts": {
     "lint": "npm run lint:js && npm run lint:flow",
     "lint:js": "jshint **.js",
@@ -21,32 +21,30 @@
     "prepublish": "babel -d lib index.js"
   },
   "dependencies": {
-    "babel-cli": "^6.3.15",
-    "babel-polyfill": "^6.3.14",
-    "babel-types": "^6.3.14",
     "chalk": "^1.1.3",
     "event-stream": "~3.3.0",
-    "flow-bin": "^0.30.0",
-    "flow-to-jshint": "~0.2.0",
+    "flow-reporter": "~0.1.0",
     "gulp-util": "~3.0.1",
-    "jshint": "^2.8.0",
     "log-symbols": "^1.0.1",
     "q": "^1.1.2",
-    "through2": "~2.0.0",
-    "flow-reporter": "~0.1.0"
+    "through2": "~2.0.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.3.15",
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-stage-2": "^6.3.13",
     "coveralls": "~2.11.5",
     "istanbul": "~0.4.1",
+    "jshint": "^2.8.0",
     "mocha": "~3.0.1",
-    "mocha-lcov-reporter": "~1.2.0",
     "should": "~10.0.0"
   },
+  "peerDependencies": {
+    "flow-bin": "^0.39.0"
+  },
   "engines": {
-    "node": ">=0.8.0",
-    "npm": ">=1.2.10"
+    "node": ">=4.0",
+    "npm": ">=3.0.10"
   },
   "babel": {
     "presets": [

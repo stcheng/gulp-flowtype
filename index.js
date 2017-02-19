@@ -4,7 +4,6 @@
 
 var Q = require('q');
 var fs = require('fs');
-require('babel-polyfill');
 var path = require('path');
 var gutil = require('gulp-util');
 var through = require('through2');
