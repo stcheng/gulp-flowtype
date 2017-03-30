@@ -67,6 +67,11 @@ Type: `function`
 Default: [charliedowler/flow-reporter](https://github.com/charliedowler/flow-reporter)
 >Optionally specify a custom reporter.
 
+##### options.reporterDarkTheme
+Type: `Boolean`
+Default: `false`
+>Optionally specify a default reporter theme. Set to `true`, if you use bright console theme.
+
 ## Release History
  * 2016-08-04    v1.0.0    [Improvement] Update dependencies + Add support for new flow format
  * 2016-01-18    v0.4.9    [Improvement] Update dependencies + fix broken code [#38](https://github.com/charliedowler/gulp-flowtype/pull/38)

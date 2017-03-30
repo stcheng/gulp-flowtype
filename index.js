@@ -104,7 +104,7 @@ function executeFlow(_path, options) {
 
       var report = typeof options.reporter === 'undefined' ?
         reporter : options.reporter;
-      report(result.errors);
+      report(result.errors, !!options.reporterDarkTheme);
 
       if (options.abort) {
         deferred.reject(new gutil.PluginError('gulp-flow', 'Flow failed'));
