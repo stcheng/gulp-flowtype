@@ -24,7 +24,7 @@ console.log = function () {
   Array.prototype.slice.call(arguments).forEach(function (arg) {
     if (/string/.test(arg)) stringError = true;
     if (/Required/.test(arg)) moduleError = true;
-    if (/iteration/.test(arg)) iterationError = true;
+    if (/must be an object/.test(arg)) iterationError = true;
   });
   log.apply(console, arguments);
 };
@@ -52,8 +52,8 @@ describe('gulp-flow', function () {
 
     stream.on('end', function () {
       setTimeout(function () {
-        should.equal(stringError, true);
-        should.equal(iterationError, true);
+        should.equal(stringError, true, 'Error with string type is not found.');
+        should.equal(iterationError, true, 'Error with interaction is not found.');
         done();
       }, 500);
     });
