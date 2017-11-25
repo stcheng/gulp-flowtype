@@ -29,6 +29,8 @@ function fatalError(stderr) {
       message: [{
         path: '',
         code: 0,
+        end: 0,
+        context: '',
         line: 0,
         start: 0,
         descr: stderr
@@ -81,6 +83,10 @@ function executeFlow(_path, options) {
     dat += data.toString();
   });
 
+  stream.stderr.on('data', function (error) {
+    dat = error.toString('utf8');
+  });
+
   stream.stdout.on('end', () =>{
     var parsed;
     try {
@@ -93,10 +99,11 @@ function executeFlow(_path, options) {
 
     // loop through errors in file
     result.errors = parsed.errors.filter(function (error) {
-      let isCurrentFile = error.message[0].path === _path;
-      let generalError = (/(Fatal)/.test(error.message[0].descr));
+      var isCurrentFile = error.message[0].path === _path;
+      var generalError = /(Fatal)/.test(error.message[0].descr);
+      var unsupportedError = /Unsupported/.test(error.message[0].descr);
 
-      return isCurrentFile || generalError;
+      return isCurrentFile || generalError || unsupportedError;
     });
 
     if (result.errors.length) {
