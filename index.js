@@ -85,7 +85,7 @@ function executeFlow(_path, options) {
 
   stream.stderr.on('data', function (error) {
     dat = error.toString('utf8');
-  })
+  });
 
   stream.stdout.on('end', () =>{
     var parsed;
