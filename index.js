@@ -2,23 +2,23 @@
 'use strict';
 
 
-var Q = require('q');
-var fs = require('fs');
-var path = require('path');
-var gutil = require('gulp-util');
-var through = require('through2');
-var flowBin = require('flow-bin');
-var logSymbols = require('log-symbols');
-var childProcess = require('child_process');
-var chalk = require('chalk');
-var reporter = require('flow-reporter');
+const Q = require('q');
+const fs = require('fs');
+const path = require('path');
+const gutil = require('gulp-util');
+const through = require('through2');
+const flowBin = require('flow-bin');
+const logSymbols = require('log-symbols');
+const childProcess = require('child_process');
+//const chalk = require('chalk');
+const reporter = require('flow-reporter');
 
 /**
  * Flow check initialises a server per folder when run,
  * we can store these paths and kill them later if need be.
  */
-var servers = [];
-var passed = true;
+const servers = [];
+let passed = true;
 
 /**
  * Wrap critical Flow exception into default Error json format
@@ -38,7 +38,7 @@ function fatalError(stderr) {
 }
 
 function optsToArgs(opts) {
-  var args = [];
+  const args = [];
 
   if (opts.all) {
     args.push('--all');
@@ -58,38 +58,38 @@ function getFlowBin() {
 }
 
 function executeFlow(_path, options) {
-  var deferred = Q.defer();
+  const deferred = Q.defer();
 
-  var opts = optsToArgs(options);
+  const opts = optsToArgs(options);
 
-  var command = opts.length || options.killFlow ? (() => {
+  const command = opts.length || options.killFlow ? (() => {
     servers.push(path.dirname(_path));
     return 'check';
   })() : 'status';
 
-  var args = [
+  const args = [
     command,
     ...opts,
     '/' + path.relative('/', _path),
     '--json'
   ];
 
-  var stream = childProcess.spawn(getFlowBin(), args);
+  const stream = childProcess.spawn(getFlowBin(), args);
 
-  var dat = "";
+  let dat = '';
   stream.stdout.on('data', data => {
     dat += data.toString();
   });
 
   stream.stdout.on('end', () =>{
-    var parsed;
+    let parsed;
     try {
       parsed = JSON.parse(dat);
     }
     catch(e) {
       parsed = fatalError(dat);
     }
-    var result = {};
+    const result = {};
 
     // loop through errors in file
     result.errors = parsed.errors.filter(function (error) {
@@ -102,8 +102,8 @@ function executeFlow(_path, options) {
     if (result.errors.length) {
       passed = false;
 
-      var report = typeof options.reporter === 'undefined' ?
-        reporter : options.reporter;
+      const report = typeof options.reporter === 'undefined' ?
+                     reporter : options.reporter;
       report(result.errors);
 
       if (options.abort) {
@@ -116,14 +116,14 @@ function executeFlow(_path, options) {
     else {
       deferred.resolve();
     }
-  })
+  });
 
   return deferred.promise;
 }
 
 function checkFlowConfigExist() {
-  var deferred = Q.defer();
-  var config = path.join(process.cwd(), '.flowconfig');
+  const deferred = Q.defer();
+  const config = path.join(process.cwd(), '.flowconfig');
   fs.exists(config, function(exists) {
     if (exists) {
       deferred.resolve();
@@ -141,7 +141,7 @@ function hasJsxPragma(contents) {
 }
 
 function isFileSuitable(file) {
-  var deferred = Q.defer();
+  const deferred = Q.defer();
   if (file.isNull()) {
     deferred.reject();
   }
@@ -158,8 +158,8 @@ function isFileSuitable(file) {
 }
 
 function killServers() {
-  var defers = servers.map(function(_path) {
-    var deferred = Q.defer();
+  const defers = servers.map(function (_path) {
+    const deferred = Q.defer();
     childProcess.execFile(getFlowBin(), ['stop'], {
       cwd: _path
     }, deferred.resolve);
@@ -173,13 +173,13 @@ module.exports = function (options={}) {
 
   function Flow(file, enc, callback) {
 
-    var _continue = () => {
+    const _continue = () => {
       this.push(file);
       callback();
     };
 
     isFileSuitable(file).then(() => {
-      var hasPragma = hasJsxPragma(file.contents.toString());
+      const hasPragma = hasJsxPragma(file.contents.toString());
       if (options.all || hasPragma) {
         checkFlowConfigExist().then(() => {
           executeFlow(file.path, options).then(_continue, err => {
@@ -202,7 +202,7 @@ module.exports = function (options={}) {
   }
 
   return through.obj(Flow, function () {
-    var end = () => {
+    const end = () => {
       this.emit('end');
       passed = true;
     };
