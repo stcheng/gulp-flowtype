@@ -5,7 +5,7 @@
 ![gulp-flowtype example](screencap.gif)
 
 ## Installation
-```shell
+```shell 
 $ npm install --save-dev gulp-flowtype
 ```
 
