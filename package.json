@@ -16,8 +16,8 @@
     "lint": "npm run lint:js && npm run lint:flow",
     "lint:js": "jshint **.js",
     "lint:flow": "flow check --lib ./declarations/",
-    "test": "babel -d lib index.js; nyc test _mocha --report html -- test/*.js --reporter spec",
-    "coveralls": "nyc cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "test": "babel -d lib index.js; istanbul test _mocha --report html -- test/*.js --reporter spec",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "prepublish": "babel -d lib index.js"
   },
   "dependencies": {
@@ -27,6 +27,7 @@
     "flow-bin": "^0.109.0",
     "flow-reporter": "^0.1.0",
     "gulp-util": "^3.0.1",
+    "istanbul": "^0.4.5",
     "log-symbols": "^1.0.1",
     "q": "^1.1.2",
     "through2": "^2.0.0"
