@@ -1,6 +1,6 @@
+/* eslint-disable require-jsdoc */
 /* @flow weak */
 'use strict';
-
 
 const Q = require('q');
 const fs = require('fs');
@@ -10,7 +10,6 @@ const through = require('through2');
 const flowBin = require('flow-bin');
 const logSymbols = require('log-symbols');
 const childProcess = require('child_process');
-const chalk = require('chalk');
 const reporter = require('flow-reporter');
 
 /**
@@ -81,7 +80,7 @@ function executeFlow(_path, options) {
     dat += data.toString();
   });
 
-  stream.stdout.on('end', () =>{
+  stream.stdout.on('end', () => {
     let parsed;
     try {
       parsed = JSON.parse(dat);
@@ -132,8 +131,7 @@ function checkFlowConfigExist() {
 }
 
 function hasJsxPragma(contents) {
-  return /@flow\b/ig
-      .test(contents);
+  return /@flow\b/ig.test(contents);
 }
 
 function isFileSuitable(file) {
@@ -141,7 +139,8 @@ function isFileSuitable(file) {
   if (file.isNull()) {
     deferred.reject();
   } else if (file.isStream()) {
-    deferred.reject(new gutil.PluginError('gulp-flow', 'Stream content is not supported'));
+    deferred.reject(new gutil.PluginError('gulp-flow',
+        'Stream content is not supported'));
   } else if (file.isBuffer()) {
     deferred.resolve();
   } else {
@@ -161,7 +160,7 @@ function killServers() {
   return Q.all(defers);
 }
 
-module.exports = function(options={}) {
+module.exports = function(options = {}) {
   options.beep = typeof options.beep !== 'undefined' ? options.beep : true;
 
   function Flow(file, enc, callback) {

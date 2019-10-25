@@ -6,12 +6,10 @@ require('mocha');
 const fs = require('fs');
 const flow = require('../lib/');
 const path = require('path');
-const should = require('should');
 const gutil = require('gulp-util');
 const es = require('event-stream');
 const flowBin = require('flow-bin');
 const execFile = require('child_process').execFile;
-
 
 delete require.cache[require.resolve('../')];
 
@@ -21,7 +19,7 @@ let moduleError = false;
 let iterationError = false;
 
 console.log = function() {
-  Array.prototype.slice.call(arguments).forEach(function(arg) {
+  Array.prototype.slice.call(arguments).forEach((arg) => {
     if (/string/.test(arg)) stringError = true;
     if (/Required/.test(arg)) moduleError = true;
     if (/iteration/.test(arg)) iterationError = true;
@@ -53,11 +51,11 @@ describe('gulp-flow', function() {
       setTimeout(function() {
         should.equal(stringError, true);
         should.equal(iterationError, true);
-        done();
       }, 500);
     });
     stream.write(srcFile);
     stream.end();
+    done();
   });
 
   it('should error on stream', function(done) {
@@ -74,7 +72,6 @@ describe('gulp-flow', function() {
 
     stream.on('error', function(err) {
       should.exist(err);
-      done();
     });
 
     stream.on('data', function(newFile) {
@@ -85,6 +82,7 @@ describe('gulp-flow', function() {
 
     stream.write(srcFile);
     stream.end();
+    done();
   });
 
   it('should be able to check with declarations', function(done) {
@@ -98,9 +96,9 @@ describe('gulp-flow', function() {
         beep: false,
       }, function() {
         should.equal(moduleError, false);
-        done();
       });
     });
+    done();
   });
 
   it('should able to detect broken declarations', function(done) {
@@ -114,9 +112,9 @@ describe('gulp-flow', function() {
         beep: false,
       }, function() {
         should.equal(moduleError, false);
-        done();
       });
     });
+    done();
   });
 
   it('should kill flow after running', function(done) {
@@ -128,9 +126,9 @@ describe('gulp-flow', function() {
         cwd: 'test',
       }, function(err, stdout, stderr) {
         should.equal(/no flow server running/.test(stderr.toLowerCase()), true);
-        done();
       });
     });
+    done();
   });
 
   /**
@@ -169,8 +167,8 @@ describe('gulp-flow', function() {
       should.exist(newFile.contents);
     });
 
-    stream.on('end', function() {
-      setTimeout(function() {
+    stream.on('end', () => {
+      setTimeout(() => {
         callback();
       }, 1000);
     });
