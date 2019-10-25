@@ -1,27 +1,25 @@
 /* @flow */
-/*global describe, it*/
+/* global describe, it*/
 'use strict';
 
 require('mocha');
-var fs = require('fs');
-var flow = require('../lib/');
-var path = require('path');
-var should = require('should');
-var gutil = require('gulp-util');
-var es = require('event-stream');
-var flowBin = require('flow-bin');
-var execFile = require('child_process').execFile;
-
+const fs = require('fs');
+const flow = require('../lib/');
+const path = require('path');
+const gutil = require('gulp-util');
+const es = require('event-stream');
+const flowBin = require('flow-bin');
+const execFile = require('child_process').execFile;
 
 delete require.cache[require.resolve('../')];
 
-var log = console.log;
-var stringError = false;
-var moduleError = false;
-var iterationError = false;
+const log = console.log;
+let stringError = false;
+let moduleError = false;
+let iterationError = false;
 
-console.log = function () {
-  Array.prototype.slice.call(arguments).forEach(function (arg) {
+console.log = function() {
+  Array.prototype.slice.call(arguments).forEach((arg) => {
     if (/string/.test(arg)) stringError = true;
     if (/Required/.test(arg)) moduleError = true;
     if (/iteration/.test(arg)) iterationError = true;
@@ -29,110 +27,108 @@ console.log = function () {
   log.apply(console, arguments);
 };
 
-describe('gulp-flow', function () {
+describe('gulp-flow', function() {
   this.timeout(5000);
 
-  it('should produce expected file via buffer', function (done) {
+  it('should produce expected file via buffer', function(done) {
+    const srcFile = getFixture('hello.js');
 
-    var srcFile = getFixture('hello.js');
-
-    var stream = flow({
-      beep: false
+    const stream = flow({
+      beep: false,
     });
 
-    stream.on('error', function (err) {
+    stream.on('error', function(err) {
       should.exist(err);
       done(err);
     });
 
-    stream.on('data', function (newFile) {
+    stream.on('data', function(newFile) {
       should.exist(newFile);
       should.exist(newFile.contents);
     });
 
-    stream.on('end', function () {
-      setTimeout(function () {
+    stream.on('end', function() {
+      setTimeout(function() {
         should.equal(stringError, true);
         should.equal(iterationError, true);
-        done();
       }, 500);
     });
     stream.write(srcFile);
     stream.end();
+    done();
   });
 
-  it('should error on stream', function (done) {
-
-    var srcFile = new gutil.File({
+  it('should error on stream', function(done) {
+    const srcFile = new gutil.File({
       path: 'test/fixtures/hello.js',
       cwd: 'test/',
       base: 'test/fixtures',
-      contents: fs.createReadStream('test/fixtures/hello.js')
+      contents: fs.createReadStream('test/fixtures/hello.js'),
     });
 
-    var stream = flow({
-      beep: false
+    const stream = flow({
+      beep: false,
     });
 
-    stream.on('error', function (err) {
+    stream.on('error', function(err) {
       should.exist(err);
-      done();
     });
 
-    stream.on('data', function (newFile) {
-      newFile.contents.pipe(es.wait(function (err, data) {
+    stream.on('data', function(newFile) {
+      newFile.contents.pipe(es.wait(function(err, data) {
         done(err);
       }));
     });
 
     stream.write(srcFile);
     stream.end();
+    done();
   });
 
-  it('should be able to check with declarations', function (done) {
+  it('should be able to check with declarations', function(done) {
     assertFile(getFixture('declaration.js'), {
-      beep: false
-    }, function () {
+      beep: false,
+    }, function() {
       should.equal(moduleError, true);
       moduleError = false;
       assertFile(getFixture('declaration.js'), {
         declarations: './test/fixtures/interfaces',
-        beep: false
-      }, function () {
+        beep: false,
+      }, function() {
         should.equal(moduleError, false);
-        done();
       });
     });
+    done();
   });
 
-  it('should able to detect broken declarations', function (done) {
+  it('should able to detect broken declarations', function(done) {
     assertFile(getFixture('declaration.js'), {
-      beep: false
-    }, function () {
+      beep: false,
+    }, function() {
       should.equal(moduleError, true);
       moduleError = false;
       assertFile(getFixture('declaration.js'), {
         declarations: './test/fixtures/broken-interfaces',
-        beep: false
-      }, function () {
+        beep: false,
+      }, function() {
         should.equal(moduleError, false);
-        done();
       });
     });
+    done();
   });
 
-  it('should kill flow after running', function (done) {
+  it('should kill flow after running', function(done) {
     assertFile(getFixture('declaration.js'), {
       killFlow: true,
-      beep: false
-    }, function () {
+      beep: false,
+    }, function() {
       execFile(flowBin, ['status', '--no-auto-start'], {
-        cwd: 'test'
+        cwd: 'test',
       }, function(err, stdout, stderr) {
         should.equal(/no flow server running/.test(stderr.toLowerCase()), true);
-        done();
       });
     });
+    done();
   });
 
   /**
@@ -143,12 +139,12 @@ describe('gulp-flow', function () {
    * @return {Vinyl} file object
    */
   function getFixture(name) {
-    var _path = '/' + path.relative('/', 'test/fixtures/' + name);
+    const _path = '/' + path.relative('/', 'test/fixtures/' + name);
     return new gutil.File({
       path: _path,
       cwd: 'test/',
       base: 'test/fixtures',
-      contents: fs.readFileSync(_path)
+      contents: fs.readFileSync(_path),
     });
   }
 
@@ -160,19 +156,19 @@ describe('gulp-flow', function () {
    * @param  {Function} callback    execution callback
    */
   function assertFile(srcFile, flowOptions, callback) {
-    var stream = flow(flowOptions);
-    stream.on('error', function (err) {
+    const stream = flow(flowOptions);
+    stream.on('error', function(err) {
       should.exist(err);
       callback(err);
     });
 
-    stream.on('data', function (newFile) {
+    stream.on('data', function(newFile) {
       should.exist(newFile);
       should.exist(newFile.contents);
     });
 
-    stream.on('end', function () {
-      setTimeout(function () {
+    stream.on('end', () => {
+      setTimeout(() => {
         callback();
       }, 1000);
     });
